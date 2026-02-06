@@ -10,6 +10,7 @@ import Catalog from "./pages/Catalog.jsx";
 import ProductDetails from "./pages/ProductDetails.jsx";
 import Legal from "./pages/Legal.jsx";
 import Cart from "./pages/Cart.jsx";
+import Contact from "./pages/Contact.jsx";
 import NotFound from "./pages/NotFound.jsx";
 
 export default function App() {
@@ -24,6 +25,7 @@ export default function App() {
           <Route path="/catalog" element={<Catalog i18n={i18n} />} />
           <Route path="/product/:slug" element={<ProductDetails />} />
           <Route path="/cart" element={<Cart />} />
+          <Route path="/contact" element={<Contact />} />
           <Route path="/legal" element={<Legal i18n={i18n} />} />
           <Route path="*" element={<NotFound />} />
         </Routes>

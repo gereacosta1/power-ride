@@ -43,9 +43,10 @@ export default function Navbar() {
               {cart.count > 0 && <CartBadge count={cart.count} />}
             </Link>
 
-            <a className="btn" href="#contact">
+            {/* Opción B: ruta dedicada */}
+            <Link className="btn" to="/contact">
               Contact
-            </a>
+            </Link>
 
             <Link className="btn btn-primary" to="/catalog">
               Shop Scooters

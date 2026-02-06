@@ -6,8 +6,8 @@ import { usd } from "../utils/money.js";
 import AffirmDisclosure from "../components/AffirmDisclosure.jsx";
 
 export default function Home() {
-  const featured = useMemo(() => products.slice(0, 6), []);
-  const spotlight = useMemo(() => products[0], []);
+  const featured = useMemo(() => products.slice(0, 6), [products]);
+  const spotlight = useMemo(() => products[0], [products]);
 
   return (
     <div className="container" style={{ paddingBottom: 24 }}>
@@ -96,6 +96,7 @@ export default function Home() {
                   src={spotlight.image}
                   alt={spotlight.name}
                   className="spot-img"
+                  loading="lazy"
                 />
               ) : (
                 <div className="spot-img" />
@@ -134,37 +135,46 @@ export default function Home() {
           <Link className="btn" to="/catalog">Open catalog</Link>
         </div>
 
-        <div className="home-slider" role="region" aria-label="Featured scooters">
-          {featured.map((p) => (
-            <Link key={p.id} to={`/product/${p.slug}`} className="slide card">
-              <div className="slide-media">
-                <img src={p.image} alt={p.name} />
-                {p.badge ? (
-                  <div className="slide-badge">
-                    <span className="badge">{p.badge}</span>
-                  </div>
-                ) : null}
-              </div>
-
-              <div className="slide-body">
-                <div className="small" style={{ opacity: 0.85 }}>{p.category || "Scooter"}</div>
-                <div className="slide-name">{p.name}</div>
-
-                <div className="slide-price">
-                  <div style={{ fontWeight: 900 }}>{usd(p.price)}</div>
-                  <div className="small">
-                    <span style={{ color: "var(--neon)" }}>${(p.price / 12).toFixed(2)}/mo</span>{" "}
-                    example
-                  </div>
+        {!featured.length ? (
+          <div className="card card-pad" style={{ marginTop: 14 }}>
+            <div style={{ fontWeight: 900 }}>No products yet</div>
+            <div className="small" style={{ marginTop: 8 }}>
+              Add products in <code>src/data/products.js</code> and ensure images exist in <code>/public</code>.
+            </div>
+          </div>
+        ) : (
+          <div className="home-slider" role="region" aria-label="Featured scooters">
+            {featured.map((p) => (
+              <Link key={p.id} to={`/product/${p.slug}`} className="slide card">
+                <div className="slide-media">
+                  <img src={p.image} alt={p.name} loading="lazy" />
+                  {p.badge ? (
+                    <div className="slide-badge">
+                      <span className="badge">{p.badge}</span>
+                    </div>
+                  ) : null}
                 </div>
 
-                <div className="small" style={{ opacity: 0.9, marginTop: 8 }}>
-                  {p.short}
+                <div className="slide-body">
+                  <div className="small" style={{ opacity: 0.85 }}>{p.category || "Scooter"}</div>
+                  <div className="slide-name">{p.name}</div>
+
+                  <div className="slide-price">
+                    <div style={{ fontWeight: 900 }}>{usd(p.price)}</div>
+                    <div className="small">
+                      <span style={{ color: "var(--neon)" }}>${(p.price / 12).toFixed(2)}/mo</span>{" "}
+                      example
+                    </div>
+                  </div>
+
+                  <div className="small" style={{ opacity: 0.9, marginTop: 8 }}>
+                    {p.short}
+                  </div>
                 </div>
-              </div>
-            </Link>
-          ))}
-        </div>
+              </Link>
+            ))}
+          </div>
+        )}
       </section>
 
       {/* WHY DIFFERENT (unique blocks) */}
