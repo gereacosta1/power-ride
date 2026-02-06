@@ -6,7 +6,7 @@ export default function Footer() {
       <div className="container">
         <div style={{ display: "flex", justifyContent: "space-between", gap: 18, flexWrap: "wrap" }}>
           <div>
-            <div style={{ fontWeight: 900 }}>Power Riders LLC</div>
+            <div style={{ fontWeight: 900 }}>Power Ride LLC</div>
             <div className="small">Electric scooters. Flexible financing with Affirm.</div>
           </div>
 
@@ -26,7 +26,7 @@ export default function Footer() {
         <div className="hr" />
 
         <div className="small">
-          © {new Date().getFullYear()} Power Riders LLC. All rights reserved.
+          © {new Date().getFullYear()} Power Ride LLC. All rights reserved.
         </div>
       </div>
     </footer>

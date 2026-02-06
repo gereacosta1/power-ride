@@ -1,11 +1,12 @@
 // netlify/functions/affirm-authorize.mjs
-// Server-side only. Creates an Affirm checkout/transaction and returns a checkout_url.
+// Creates an Affirm transaction and returns a checkout_url.
 //
 // ENV in Netlify:
-// - AFFIRM_PUBLIC_KEY   (optional depending on setup)
-// - AFFIRM_PRIVATE_KEY  (or AFFIRM_PRIVATE_API_KEY)
-// - AFFIRM_BASE_URL     (default: https://api.affirm.com/api/v2)
-// - ALLOWED_ORIGINS     (optional CSV allowlist)
+// - AFFIRM_PRIVATE_KEY (or AFFIRM_PRIVATE_API_KEY)
+// - AFFIRM_BASE_URL (default: https://api.affirm.com/api/v2)
+// - ALLOWED_ORIGINS (optional CSV allowlist)
+// Optional nice-to-have:
+// - SITE_URL (e.g. https://power-ride.netlify.app) override base URL for redirects
 
 const BASE = String(process.env.AFFIRM_BASE_URL || "https://api.affirm.com/api/v2")
   .trim()
@@ -20,6 +21,7 @@ function cors(origin) {
   const o = origin || "";
   const allow =
     allowedOrigins.length === 0 ? "*" : allowedOrigins.includes(o) ? o : allowedOrigins[0];
+
   return {
     "Access-Control-Allow-Origin": allow,
     "Access-Control-Allow-Methods": "POST, OPTIONS",
@@ -36,15 +38,27 @@ function json(statusCode, body, headers = {}) {
 }
 
 function getAuthHeader() {
-  const priv =
-    process.env.AFFIRM_PRIVATE_KEY ||
-    process.env.AFFIRM_PRIVATE_API_KEY ||
-    "";
+  const priv = process.env.AFFIRM_PRIVATE_KEY || process.env.AFFIRM_PRIVATE_API_KEY || "";
   if (!priv) throw new Error("Missing AFFIRM_PRIVATE_KEY");
-  // Many setups use Basic auth with the private key as username and blank password.
-  // If your Riders project uses a different scheme, mirror that exactly here.
   const token = Buffer.from(`${priv}:`).toString("base64");
   return `Basic ${token}`;
+}
+
+function getSiteBaseUrl(event) {
+  // Prefer explicit SITE_URL if set
+  const envUrl =
+    process.env.SITE_URL ||
+    process.env.URL || // Netlify production URL
+    process.env.DEPLOY_PRIME_URL || // Netlify deploy preview URL
+    "";
+
+  if (envUrl) return String(envUrl).replace(/\/+$/, "");
+
+  // Fallback: derive from request headers
+  const proto = event.headers?.["x-forwarded-proto"] || "https";
+  const host = event.headers?.host;
+  if (!host) return "https://power-ride.netlify.app"; // last resort fallback
+  return `${proto}://${host}`;
 }
 
 export async function handler(event) {
@@ -54,7 +68,6 @@ export async function handler(event) {
   if (event.httpMethod === "OPTIONS") {
     return { statusCode: 204, headers: corsHeaders, body: "" };
   }
-
   if (event.httpMethod !== "POST") {
     return json(405, { error: "Method Not Allowed" }, corsHeaders);
   }
@@ -62,18 +75,23 @@ export async function handler(event) {
   try {
     const payload = JSON.parse(event.body || "{}");
 
-    // Minimal validation
     const items = Array.isArray(payload.items) ? payload.items : [];
     if (items.length < 1) {
       return json(400, { error: "Missing items" }, corsHeaders);
     }
 
-    // Example transaction body (you may need to align with your working Riders payload)
+    const siteBase = getSiteBaseUrl(event);
+
+    // Allow frontend to override confirmation/cancel, otherwise use your site.
+    const confirmationUrl =
+      payload.user_confirmation_url || `${siteBase}/legal?affirm=confirm`;
+    const cancelUrl =
+      payload.user_cancel_url || `${siteBase}/catalog?affirm=cancel`;
+
     const body = {
       merchant: {
-        // Put real info later (name, website)
-        user_confirmation_url: payload.user_confirmation_url || "https://example.com/confirm",
-        user_cancel_url: payload.user_cancel_url || "https://example.com/cancel",
+        user_confirmation_url: confirmationUrl,
+        user_cancel_url: cancelUrl,
         user_confirmation_url_action: "POST"
       },
       items,
@@ -97,20 +115,22 @@ export async function handler(event) {
     if (!res.ok) {
       return json(
         res.status,
-        { error: data?.message || data?.error || "Affirm API error", details: data },
+        {
+          error: data?.message || data?.error || "Affirm API error",
+          details: data
+        },
         corsHeaders
       );
     }
 
-    // Many Affirm responses include a redirect/checkout URL. Adjust key based on actual response.
-    const checkout_url =
-      data?.checkout_url ||
-      data?.redirect_url ||
-      data?.redirect?.url ||
-      "";
+    const checkout_url = data?.checkout_url || data?.redirect_url || data?.redirect?.url || "";
 
     if (!checkout_url) {
-      return json(500, { error: "Affirm response missing checkout_url", details: data }, corsHeaders);
+      return json(
+        500,
+        { error: "Affirm response missing checkout_url", details: data },
+        corsHeaders
+      );
     }
 
     return json(200, { checkout_url }, corsHeaders);

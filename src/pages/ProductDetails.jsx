@@ -1,7 +1,9 @@
+// src/pages/ProductDetails.jsx
 import React, { useMemo, useState } from "react";
 import { useParams, Link } from "react-router-dom";
 import { getProductBySlug } from "../data/products.js";
 import { usd } from "../utils/money.js";
+import AffirmDisclosure from "../components/AffirmDisclosure.jsx";
 
 export default function ProductDetails() {
   const { slug } = useParams();
@@ -18,7 +20,9 @@ export default function ProductDetails() {
             The product you’re looking for doesn’t exist.
           </div>
           <div style={{ marginTop: 12 }}>
-            <Link className="btn btn-primary" to="/catalog">Back to catalog</Link>
+            <Link className="btn btn-primary" to="/catalog">
+              Back to catalog
+            </Link>
           </div>
         </div>
       </div>
@@ -28,9 +32,11 @@ export default function ProductDetails() {
   async function startAffirmCheckout() {
     setErr("");
     setBusy(true);
+
     try {
-      // Minimal “server creates Affirm transaction” pattern.
-      // You can extend later with shipping/address/metadata/cart.
+      // NOTE: This will work once you add your Affirm keys in Netlify ENV.
+      // Endpoint is redirected via netlify.toml:
+      // /api/affirm-authorize -> /.netlify/functions/affirm-authorize
       const res = await fetch("/api/affirm-authorize", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -50,14 +56,14 @@ export default function ProductDetails() {
         })
       });
 
-      const data = await res.json();
+      const data = await res.json().catch(() => ({}));
       if (!res.ok) throw new Error(data?.error || "Affirm authorize failed");
 
-      // data.checkout_url should be returned by your function.
       if (data?.checkout_url) {
         window.location.href = data.checkout_url;
         return;
       }
+
       throw new Error("Missing checkout_url from server");
     } catch (e) {
       setErr(String(e?.message || e));
@@ -68,56 +74,111 @@ export default function ProductDetails() {
 
   return (
     <div className="container" style={{ paddingTop: 18, paddingBottom: 18 }}>
-      <div style={{ display: "grid", gridTemplateColumns: "1.1fr .9fr", gap: 16, alignItems: "start" }}>
+      <div
+        style={{
+          display: "grid",
+          gridTemplateColumns: "1.1fr .9fr",
+          gap: 16,
+          alignItems: "start"
+        }}
+      >
         <div className="card" style={{ overflow: "hidden" }}>
           <img
             src={product.image}
             alt={product.name}
-            style={{ width: "100%", height: 420, objectFit: "cover", display: "block" }}
+            style={{
+              width: "100%",
+              height: 420,
+              objectFit: "cover",
+              display: "block"
+            }}
           />
         </div>
 
         <div className="card card-pad">
           <div className="h-eyebrow">Scooter</div>
-          <h2 style={{ margin: "10px 0 6", letterSpacing: "-.02em" }}>{product.name}</h2>
+          <h2 style={{ margin: "10px 0 6", letterSpacing: "-.02em" }}>
+            {product.name}
+          </h2>
 
-          <div style={{ display: "flex", alignItems: "baseline", justifyContent: "space-between", gap: 10, flexWrap: "wrap" }}>
-            <div style={{ fontSize: 22, fontWeight: 900 }}>{usd(product.price)}</div>
+          <div
+            style={{
+              display: "flex",
+              alignItems: "baseline",
+              justifyContent: "space-between",
+              gap: 10,
+              flexWrap: "wrap"
+            }}
+          >
+            <div style={{ fontSize: 22, fontWeight: 900 }}>
+              {usd(product.price)}
+            </div>
             <div className="small">
-              As low as <span style={{ color: "var(--neon)" }}>${(product.price / 12).toFixed(2)}/mo</span> with Affirm (example)
+              As low as{" "}
+              <span style={{ color: "var(--neon)" }}>
+                ${(product.price / 12).toFixed(2)}/mo
+              </span>{" "}
+              with Affirm (example)
             </div>
           </div>
 
-          <p className="small" style={{ marginTop: 10 }}>{product.short}</p>
+          <p className="small" style={{ marginTop: 10 }}>
+            {product.short}
+          </p>
 
           <div style={{ marginTop: 10 }}>
             <div style={{ fontWeight: 800, marginBottom: 6 }}>Specs</div>
             <ul className="small" style={{ margin: 0, paddingLeft: 18 }}>
-              {product.specs?.map((s) => <li key={s} style={{ marginBottom: 6 }}>{s}</li>)}
+              {product.specs?.map((s) => (
+                <li key={s} style={{ marginBottom: 6 }}>
+                  {s}
+                </li>
+              ))}
             </ul>
           </div>
 
           {err && (
-            <div className="card" style={{ marginTop: 12, padding: 12, borderColor: "rgba(255,80,80,.35)" }}>
+            <div
+              className="card"
+              style={{
+                marginTop: 12,
+                padding: 12,
+                borderColor: "rgba(255,80,80,.35)"
+              }}
+            >
               <div style={{ fontWeight: 800 }}>Checkout error</div>
-              <div className="small" style={{ marginTop: 6 }}>{err}</div>
+              <div className="small" style={{ marginTop: 6 }}>
+                {err}
+              </div>
             </div>
           )}
 
-          <div style={{ display: "flex", gap: 10, marginTop: 14, flexWrap: "wrap" }}>
-            <button className="btn btn-primary" onClick={startAffirmCheckout} disabled={busy}>
+          <div
+            style={{
+              display: "flex",
+              gap: 10,
+              marginTop: 14,
+              flexWrap: "wrap"
+            }}
+          >
+            <button
+              className="btn btn-primary"
+              onClick={startAffirmCheckout}
+              disabled={busy}
+            >
               {busy ? "Starting..." : "Checkout with Affirm"}
             </button>
-            <Link className="btn" to="/catalog">Back</Link>
-          </div>
 
-          <div className="hr" />
-
-          <div className="small">
-            Rates from 0–36% APR. Subject to eligibility check. Options depend on purchase amount; down payment may be required.
-            Full terms: affirm.com/disclosures.
+            <Link className="btn" to="/catalog">
+              Back
+            </Link>
           </div>
         </div>
+      </div>
+
+      {/* Compliance: disclosure must be on the same URL where Affirm is advertised */}
+      <div style={{ marginTop: 18 }}>
+        <AffirmDisclosure />
       </div>
     </div>
   );

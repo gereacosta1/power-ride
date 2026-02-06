@@ -1,6 +1,7 @@
 import React from "react";
 import { products } from "../data/products.js";
 import ProductCard from "../components/ProductCard.jsx";
+import AffirmDisclosure from "../components/AffirmDisclosure.jsx";
 
 export default function Catalog() {
   return (
@@ -10,7 +11,7 @@ export default function Catalog() {
           <div className="h-eyebrow">Electric scooters</div>
           <h2 style={{ margin: "10px 0 0", letterSpacing: "-.02em" }}>Catalog</h2>
           <p className="small" style={{ marginTop: 8 }}>
-            Same catalog structure as Riders Miami, focused only on scooters. Financing with Affirm.
+            Electric scooters only. Financing with Affirm available on eligible purchases.
           </p>
         </div>
       </div>
@@ -19,6 +20,11 @@ export default function Catalog() {
         {products.map((p) => (
           <ProductCard key={p.id} p={p} />
         ))}
+      </div>
+
+      {/* Compliance: disclosure MUST be on the same URL where Affirm is advertised */}
+      <div style={{ marginTop: 18 }}>
+        <AffirmDisclosure />
       </div>
     </div>
   );

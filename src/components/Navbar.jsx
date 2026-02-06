@@ -9,7 +9,8 @@ export default function Navbar() {
           <div className="nav-left">
             <Link to="/" className="brand" aria-label="Power Riders Home">
               <span className="brand-dot" />
-              <span>Power Riders LLC</span>
+              <span>Power Ride LLC</span>
+
             </Link>
           </div>
 

@@ -9,7 +9,7 @@ export default function Home() {
           <div>
             <span className="h-eyebrow">Dark • Neon • Minimal</span>
             <h1 className="h-title">
-              Power <span className="glow">Riders</span> LLC
+              Power <span className="glow">Ride</span> LLC
             </h1>
             <p className="h-sub">
               Electric scooters only. Clean catalog, fast checkout, and flexible financing with Affirm.
