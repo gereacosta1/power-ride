@@ -1,3 +1,4 @@
+//src/pages/Catalog.jsx
 import React from "react";
 import { products } from "../data/products.js";
 import ProductCard from "../components/ProductCard.jsx";

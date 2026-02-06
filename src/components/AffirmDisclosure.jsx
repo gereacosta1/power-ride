@@ -1,3 +1,4 @@
+//src/components/AffirmDisclosure.jsx
 import React from "react";
 
 export default function AffirmDisclosure({ compact = false }) {
