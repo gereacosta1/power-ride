@@ -1,53 +1,139 @@
-export const products = [
+// src/data/products.js
+
+// Helpers
+function slugify(s) {
+  return String(s || "")
+    .trim()
+    .toLowerCase()
+    .replace(/&/g, "and")
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/(^-|-$)/g, "");
+}
+
+function specsObjectToList(obj) {
+  if (!obj || typeof obj !== "object") return [];
+  return Object.entries(obj).map(([k, v]) => {
+    const key = String(k).replace(/-/g, " ");
+    return `${key}: ${v}`;
+  });
+}
+
+// Source data (from Riders JSON you sent)
+const ridersJson = [
   {
-    id: "pr-001",
-    slug: "e2-plus-ii-electric-scooter",
-    name: "E2 PLUS II Electric Scooter",
+    id: 1,
+    title: "E2 PLUS II Electric Scooter",
+    category: "scooter",
     price: 700,
-    badge: "New",
-    image:
-      "https://images.unsplash.com/photo-1558979158-65a1eaa08691?auto=format&fit=crop&w=1200&q=80",
-    short:
-      "Daily commuter scooter with solid range and reliable build.",
-    specs: ["Top speed: 19 mph", "Range: up to 25 mi", "Max load: 220 lb"]
+    image: "/E2-PLUS-II-Electric-Scooter.png",
+    description: "Powerful and efficient electric scooter.",
+    specs: { engine: "500cc", weight: "168kg", warranty: "12 months" },
+    inStock: true,
+    badge: "New"
   },
   {
-    id: "pr-002",
-    slug: "f3-electric-scooter",
-    name: "F3 Electric Scooter",
+    id: 2,
+    title: "F3 Electric Scooter",
+    category: "scooter",
     price: 900,
-    badge: "12-Month Warranty",
-    image:
-      "https://images.unsplash.com/photo-1520975661595-6453be3f7070?auto=format&fit=crop&w=1200&q=80",
-    short:
-      "Upgraded motor and braking for smoother acceleration and control.",
-    specs: ["Top speed: 22 mph", "Range: up to 28 mi", "Dual braking"]
+    image: "/F3-Electric-Scooter.png",
+    description: "High-performance electric scooter.",
+    specs: { range: "120km", power: "5kW", "top-speed": "90km/h" },
+    inStock: true,
+    badge: "12-Month Warranty"
   },
   {
-    id: "pr-003",
-    slug: "street-pro-scooter",
-    name: "Street Pro Scooter",
-    price: 1200,
-    badge: "Bestseller",
-    image:
-      "https://images.unsplash.com/photo-1590642918907-3b740f03c2f6?auto=format&fit=crop&w=1200&q=80",
-    short:
-      "Balanced performance, comfort, and durability for city riders.",
-    specs: ["Top speed: 24 mph", "Range: up to 32 mi", "Suspension: front"]
+    id: 3,
+    title: "Freego E4 Pro",
+    category: "bicycle",
+    price: 2000,
+    image: "/Freego-E4-Pro.png",
+    description: "High-performance bicycle tire.",
+    specs: { size: "120/70 R17", compound: "dual" },
+    inStock: true,
+    badge: "Bestseller"
   },
   {
-    id: "pr-004",
-    slug: "commuter-max-scooter",
-    name: "Commuter Max Scooter",
-    price: 1500,
-    badge: "Hot",
-    image:
-      "https://images.unsplash.com/photo-1520975869011-7f745fe11d9c?auto=format&fit=crop&w=1200&q=80",
-    short:
-      "Long-range setup designed for heavier daily use.",
-    specs: ["Top speed: 28 mph", "Range: up to 40 mi", "Tires: 10 inch"]
+    id: 4,
+    title: "Freego eFlex Raptor E1",
+    category: "bicycle",
+    price: 1000,
+    image: "/Freego-eFlex-Raptor-E1.png",
+    description: "Compact, powerful Bluetooth speaker.",
+    specs: { battery: "12h", waterproof: "IPX5" },
+    inStock: true,
+    badge: "Hot"
+  },
+  {
+    id: 5,
+    title: "Freego Flash F3 Pro",
+    category: "bicycle",
+    price: 3400,
+    image: "/Freego-Flash-F3-Pro.png",
+    description: "Compact, powerful Bluetooth speaker.",
+    specs: { battery: "12h", waterproof: "IPX5" },
+    inStock: true,
+    badge: "Hot"
+  },
+  {
+    id: 6,
+    title: "Freego Shotgun F2 Pro Max",
+    category: "motorcycle",
+    price: 3000,
+    image: "/Freego-Shotgun-F2-Pro-Max.png",
+    description: "Compact, powerful Bluetooth speaker.",
+    specs: { battery: "12h", waterproof: "IPX5" },
+    inStock: true,
+    badge: "Hot"
+  },
+  {
+    id: 7,
+    title: "Freego Shotgun Prime F2 Pro",
+    category: "motorcycle",
+    price: 3800,
+    image: "/Freego-Shotgun-Prime-F2-Pro.png",
+    description: "Compact, powerful Bluetooth speaker.",
+    specs: { battery: "12h", waterproof: "IPX5" },
+    inStock: true,
+    badge: "Hot"
+  },
+  {
+    id: 8,
+    title: "Freego X2 Dirt Master Off-Road",
+    category: "motorcycle",
+    price: 4000,
+    image: "/Freego-X2-Dirt-Master-Off-Road-eBike.png",
+    description: "Compact, powerful Bluetooth speaker.",
+    specs: { battery: "12h", waterproof: "IPX5" },
+    inStock: true,
+    badge: "Hot"
+  },
+  {
+    id: 9,
+    title: "Segway Ninebot S2 Self-Balancing Scooter",
+    category: "scooter",
+    price: 150,
+    image: "/Segway-Ninebot-S2-Self-Balancing-Scooter.png",
+    description: "Compact, powerful Bluetooth speaker.",
+    specs: { battery: "12h", waterproof: "IPX5" },
+    inStock: true,
+    badge: "Hot"
   }
 ];
+
+// Adapt to Power Ride format
+export const products = ridersJson.map((p) => ({
+  id: String(p.id),
+  slug: slugify(p.title),
+  name: p.title,
+  category: p.category, // keep if you want filters later
+  price: Number(p.price || 0),
+  image: p.image,
+  short: p.description || "",
+  specs: specsObjectToList(p.specs),
+  badge: p.badge || "",
+  inStock: Boolean(p.inStock)
+}));
 
 export function getProductBySlug(slug) {
   return products.find((p) => p.slug === slug);
