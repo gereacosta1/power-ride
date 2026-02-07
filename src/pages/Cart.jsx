@@ -26,13 +26,13 @@ export default function Cart() {
             display_name: it.name,
             sku: it.id || it.slug,
             unit_price: Math.round(Number(it.price || 0) * 100),
-            qty: Number(it.qty || 1)
+            qty: Number(it.qty || 1),
           })),
           currency: "USD",
           shipping_amount: Math.round(Number(cart.shipping || 0) * 100),
           tax_amount: Math.round(Number(cart.tax || 0) * 100),
-          metadata: { source: "cart" }
-        })
+          metadata: { source: "cart" },
+        }),
       });
 
       const data = await res.json();
@@ -53,7 +53,15 @@ export default function Cart() {
   return (
     <div className="container" style={{ paddingTop: 18, paddingBottom: 18 }}>
       <div className="card card-pad">
-        <div style={{ display: "flex", alignItems: "baseline", justifyContent: "space-between", gap: 12, flexWrap: "wrap" }}>
+        <div
+          style={{
+            display: "flex",
+            alignItems: "baseline",
+            justifyContent: "space-between",
+            gap: 12,
+            flexWrap: "wrap",
+          }}
+        >
           <div>
             <div className="h-eyebrow">Checkout</div>
             <h2 style={{ margin: "8px 0 0", letterSpacing: "-.02em" }}>Cart</h2>
@@ -63,7 +71,9 @@ export default function Cart() {
           </div>
 
           <div style={{ display: "flex", gap: 10, flexWrap: "wrap" }}>
-            <Link className="btn" to="/catalog">Continue shopping</Link>
+            <Link className="btn" to="/catalog">
+              Continue shopping
+            </Link>
             {!!cart.items.length && (
               <button className="btn" onClick={cart.clear} type="button">
                 Clear cart
@@ -97,14 +107,22 @@ export default function Cart() {
                         </div>
                       </div>
 
-                      <button className="btn cart-remove" onClick={() => cart.removeItem(it.slug)} type="button">
+                      <button
+                        className="btn cart-remove"
+                        onClick={() => cart.removeItem(it.slug)}
+                        type="button"
+                      >
                         Remove
                       </button>
                     </div>
 
                     <div className="cart-line-bottom">
                       <div className="cart-qty" aria-label="Quantity controls">
-                        <button className="btn" onClick={() => cart.setQty(it.slug, (it.qty || 1) - 1)} type="button">
+                        <button
+                          className="btn"
+                          onClick={() => cart.setQty(it.slug, (it.qty || 1) - 1)}
+                          type="button"
+                        >
                           −
                         </button>
 
@@ -116,7 +134,11 @@ export default function Cart() {
                           aria-label="Quantity"
                         />
 
-                        <button className="btn" onClick={() => cart.setQty(it.slug, (it.qty || 1) + 1)} type="button">
+                        <button
+                          className="btn"
+                          onClick={() => cart.setQty(it.slug, (it.qty || 1) + 1)}
+                          type="button"
+                        >
                           +
                         </button>
                       </div>
@@ -143,14 +165,28 @@ export default function Cart() {
               </div>
 
               {err && (
-                <div className="card" style={{ marginTop: 12, padding: 12, borderColor: "rgba(255,80,80,.35)" }}>
+                <div
+                  className="card"
+                  style={{
+                    marginTop: 12,
+                    padding: 12,
+                    borderColor: "rgba(255,80,80,.35)",
+                  }}
+                >
                   <div style={{ fontWeight: 800 }}>Checkout error</div>
-                  <div className="small" style={{ marginTop: 6 }}>{err}</div>
+                  <div className="small" style={{ marginTop: 6 }}>
+                    {err}
+                  </div>
                 </div>
               )}
 
               <div style={{ display: "grid", gap: 10, marginTop: 14 }}>
-                <button className="btn btn-primary" onClick={checkoutAffirm} disabled={busy} type="button">
+                <button
+                  className="btn btn-primary"
+                  onClick={checkoutAffirm}
+                  disabled={busy}
+                  type="button"
+                >
                   {busy ? "Starting..." : "Checkout with Affirm"}
                 </button>
 
@@ -161,7 +197,8 @@ export default function Cart() {
 
               <div className="hr" />
 
-              <AffirmDisclosure compact />
+              {/* Keep compact styling, but the component now always includes the TILA example text */}
+              <AffirmDisclosure compact id="affirm-terms-cart" />
             </div>
           </div>
         )}
@@ -172,8 +209,17 @@ export default function Cart() {
 
 function Row({ label, value, strong }) {
   return (
-    <div style={{ display: "flex", justifyContent: "space-between", gap: 10, fontWeight: strong ? 900 : 600 }}>
-      <div className="small" style={{ opacity: strong ? 1 : 0.85 }}>{label}</div>
+    <div
+      style={{
+        display: "flex",
+        justifyContent: "space-between",
+        gap: 10,
+        fontWeight: strong ? 900 : 600,
+      }}
+    >
+      <div className="small" style={{ opacity: strong ? 1 : 0.85 }}>
+        {label}
+      </div>
       <div>{value}</div>
     </div>
   );

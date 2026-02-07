@@ -6,8 +6,8 @@ import { usd } from "../utils/money.js";
 import AffirmDisclosure from "../components/AffirmDisclosure.jsx";
 
 export default function Home() {
-  const featured = useMemo(() => products.slice(0, 6), [products]);
-  const spotlight = useMemo(() => products[0], [products]);
+  const featured = useMemo(() => products.slice(0, 6), []);
+  const spotlight = useMemo(() => products[0], []);
 
   return (
     <div className="container" style={{ paddingBottom: 24 }}>
@@ -33,6 +33,10 @@ export default function Home() {
               </Link>
               <a className="btn" href="#featured">
                 See featured
+              </a>
+              {/* Optional: jump straight to disclosure on Home */}
+              <a className="btn" href="#affirm-terms-home">
+                View terms
               </a>
             </div>
 
@@ -103,7 +107,10 @@ export default function Home() {
               )}
 
               <div className="spot-actions">
-                <Link className="btn btn-primary" to={spotlight ? `/product/${spotlight.slug}` : "/catalog"}>
+                <Link
+                  className="btn btn-primary"
+                  to={spotlight ? `/product/${spotlight.slug}` : "/catalog"}
+                >
                   View details
                 </Link>
                 <Link className="btn" to="/catalog">
@@ -197,9 +204,7 @@ export default function Home() {
               The slider showcases real scooters immediately. It fills space with product visuals while staying lightweight.
             </div>
             <div className="hr" />
-            <div className="small">
-              Tip: keep featured = 6 for best mobile scroll.
-            </div>
+            <div className="small">Tip: keep featured = 6 for best mobile scroll.</div>
           </div>
 
           <div className="card card-pad">
@@ -208,9 +213,7 @@ export default function Home() {
               Home → Featured → Product → Add to cart → Checkout. It’s obvious what to do next.
             </div>
             <div className="hr" />
-            <div className="small">
-              CTAs are repeated at strategic points (not just once).
-            </div>
+            <div className="small">CTAs are repeated at strategic points (not just once).</div>
           </div>
 
           <div className="card card-pad">
@@ -219,9 +222,7 @@ export default function Home() {
               Financing disclosure appears on URLs where financing is advertised. Keep it visible and consistent.
             </div>
             <div className="hr" />
-            <div className="small">
-              You already have the Legal page for deeper details.
-            </div>
+            <div className="small">You already have the Legal page for deeper details.</div>
           </div>
         </div>
       </section>
@@ -239,31 +240,15 @@ export default function Home() {
         </div>
 
         <div className="home-picks">
-          <Pick
-            title="Daily commute"
-            desc="Lightweight, clean design, quick browse."
-            cta="See scooters"
-            to="/catalog"
-          />
-          <Pick
-            title="Performance"
-            desc="Higher price range, higher spec feel."
-            cta="View featured"
-            to="#featured"
-            asAnchor
-          />
-          <Pick
-            title="Financing"
-            desc="Clear disclosure + legal page."
-            cta="Read details"
-            to="/legal"
-          />
+          <Pick title="Daily commute" desc="Lightweight, clean design, quick browse." cta="See scooters" to="/catalog" />
+          <Pick title="Performance" desc="Higher price range, higher spec feel." cta="View featured" to="#featured" asAnchor />
+          <Pick title="Financing" desc="Clear disclosure + legal page." cta="Read details" to="/legal" />
         </div>
       </section>
 
       {/* DISCLOSURE / COMPLIANCE (Home also advertises financing) */}
       <section className="home-section">
-        <AffirmDisclosure />
+        <AffirmDisclosure id="affirm-terms-home" />
       </section>
 
       {/* FINAL CTA */}

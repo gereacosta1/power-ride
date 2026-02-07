@@ -24,7 +24,9 @@ export default function ProductDetails() {
             The product you’re looking for doesn’t exist.
           </div>
           <div style={{ marginTop: 12 }}>
-            <Link className="btn btn-primary" to="/catalog">Back to catalog</Link>
+            <Link className="btn btn-primary" to="/catalog">
+              Back to catalog
+            </Link>
           </div>
         </div>
       </div>
@@ -50,14 +52,14 @@ export default function ProductDetails() {
               display_name: product.name,
               sku: product.id,
               unit_price: Math.round(product.price * 100),
-              qty: 1
-            }
+              qty: 1,
+            },
           ],
           currency: "USD",
           shipping_amount: 0,
           tax_amount: 0,
-          metadata: { product_slug: product.slug, source: "product_details" }
-        })
+          metadata: { product_slug: product.slug, source: "product_details" },
+        }),
       });
 
       const data = await res.json();
@@ -84,10 +86,7 @@ export default function ProductDetails() {
         {/* Media */}
         <div className="card pd-media">
           <div className="pd-media-inner">
-            <img
-              src={product.image}
-              alt={product.name}
-            />
+            <img src={product.image} alt={product.name} />
           </div>
         </div>
 
@@ -96,7 +95,9 @@ export default function ProductDetails() {
           <div className="pd-top">
             <div>
               <div className="h-eyebrow">{product.category || "Scooter"}</div>
-              <h2 style={{ margin: "10px 0 6", letterSpacing: "-.02em" }}>{product.name}</h2>
+              <h2 style={{ margin: "10px 0 6", letterSpacing: "-.02em" }}>
+                {product.name}
+              </h2>
             </div>
 
             {product.badge ? (
@@ -110,7 +111,9 @@ export default function ProductDetails() {
             <div style={{ fontSize: 24, fontWeight: 900 }}>{usd(product.price)}</div>
             <div className="small">
               As low as{" "}
-              <span style={{ color: "var(--neon)" }}>${(product.price / 12).toFixed(2)}/mo</span>{" "}
+              <span style={{ color: "var(--neon)" }}>
+                ${(product.price / 12).toFixed(2)}/mo
+              </span>{" "}
               with Affirm (example)
             </div>
           </div>
@@ -126,21 +129,33 @@ export default function ProductDetails() {
               <div style={{ fontWeight: 800, marginBottom: 8 }}>Specs</div>
               <div className="pd-specs">
                 {specs.map((s) => (
-                  <span key={s} className="pd-spec">{s}</span>
+                  <span key={s} className="pd-spec">
+                    {s}
+                  </span>
                 ))}
               </div>
             </div>
           ) : null}
 
           {err && (
-            <div className="card" style={{ marginTop: 12, padding: 12, borderColor: "rgba(255,80,80,.35)" }}>
+            <div
+              className="card"
+              style={{ marginTop: 12, padding: 12, borderColor: "rgba(255,80,80,.35)" }}
+            >
               <div style={{ fontWeight: 800 }}>Checkout error</div>
-              <div className="small" style={{ marginTop: 6 }}>{err}</div>
+              <div className="small" style={{ marginTop: 6 }}>
+                {err}
+              </div>
             </div>
           )}
 
           <div className="pd-actions">
-            <button className="btn btn-primary" onClick={startAffirmCheckout} disabled={busy} type="button">
+            <button
+              className="btn btn-primary"
+              onClick={startAffirmCheckout}
+              disabled={busy}
+              type="button"
+            >
               {busy ? "Starting..." : "Checkout with Affirm"}
             </button>
 
@@ -148,13 +163,18 @@ export default function ProductDetails() {
               {added ? "Added" : "Add to cart"}
             </button>
 
-            <Link className="btn" to="/cart">Go to cart</Link>
-            <Link className="btn" to="/catalog">Back</Link>
+            <Link className="btn" to="/cart">
+              Go to cart
+            </Link>
+            <Link className="btn" to="/catalog">
+              Back
+            </Link>
           </div>
 
           <div className="hr" />
 
-          <AffirmDisclosure compact />
+          {/* Keep compact styling, but the component now always includes the TILA example text */}
+          <AffirmDisclosure compact id="affirm-terms-product" />
         </div>
       </div>
     </div>
