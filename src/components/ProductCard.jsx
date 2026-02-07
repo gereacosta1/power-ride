@@ -15,12 +15,12 @@ export default function ProductCard({ p }) {
   }
 
   return (
-    <div className="card product-card" style={{ overflow: "hidden" }}>
+    <div className="card product-card">
       <div style={{ position: "relative" }}>
         <img
           src={p.image}
           alt={p.name}
-          style={{ width: "100%", height: 220, objectFit: "contain", display: "block", background: "rgba(255,255,255,.02)" }}
+          style={{ width: "100%", height: 220, objectFit: "contain", display: "block" }}
         />
 
         {p.badge ? (
@@ -33,7 +33,7 @@ export default function ProductCard({ p }) {
       <div className="card-pad">
         <div className="small" style={{ opacity: 0.85 }}>{p.category || "Scooter"}</div>
 
-        <div style={{ fontWeight: 900, marginTop: 6, lineHeight: 1.15 }}>
+        <div style={{ fontWeight: 900, marginTop: 2, lineHeight: 1.15 }}>
           {p.name}
         </div>
 
@@ -44,7 +44,7 @@ export default function ProductCard({ p }) {
             justifyContent: "space-between",
             gap: 10,
             flexWrap: "wrap",
-            marginTop: 8
+            marginTop: 2
           }}
         >
           <div style={{ fontSize: 18, fontWeight: 900 }}>{usd(p.price)}</div>
@@ -56,11 +56,11 @@ export default function ProductCard({ p }) {
           </div>
         </div>
 
-        <p className="small" style={{ marginTop: 10, opacity: 0.9 }}>
+        <p className="small" style={{ marginTop: 2 }}>
           {p.short}
         </p>
 
-        <div style={{ display: "flex", gap: 10, marginTop: 12, flexWrap: "wrap" }}>
+        <div style={{ display: "flex", gap: 10, marginTop: 8, flexWrap: "wrap" }}>
           <Link className="btn btn-primary" to={`/product/${p.slug}`}>
             View
           </Link>

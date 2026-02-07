@@ -83,11 +83,8 @@ export default function Cart() {
             {/* Items */}
             <div className="cart-items">
               {lines.map((it) => (
-                <div
-                  key={it.slug}
-                  className="card cart-line"
-                >
-                  <div className="card cart-thumb">
+                <div key={it.slug} className="card cart-line">
+                  <div className="cart-thumb">
                     <img src={it.image} alt={it.name} />
                   </div>
 
@@ -95,7 +92,9 @@ export default function Cart() {
                     <div className="cart-line-top">
                       <div>
                         <div className="cart-line-title">{it.name}</div>
-                        <div className="small" style={{ marginTop: 4 }}>{usd(it.price)} each</div>
+                        <div className="small" style={{ marginTop: 4 }}>
+                          {usd(it.price)} each
+                        </div>
                       </div>
 
                       <button className="btn cart-remove" onClick={() => cart.removeItem(it.slug)} type="button">
@@ -104,7 +103,7 @@ export default function Cart() {
                     </div>
 
                     <div className="cart-line-bottom">
-                      <div className="cart-qty">
+                      <div className="cart-qty" aria-label="Quantity controls">
                         <button className="btn" onClick={() => cart.setQty(it.slug, (it.qty || 1) - 1)} type="button">
                           −
                         </button>

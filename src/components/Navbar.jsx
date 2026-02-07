@@ -1,4 +1,3 @@
-// src/components/Navbar.jsx
 import React from "react";
 import { Link, NavLink, useLocation } from "react-router-dom";
 import { useCart } from "../context/CartContext.jsx";
@@ -43,7 +42,6 @@ export default function Navbar() {
               {cart.count > 0 && <CartBadge count={cart.count} />}
             </Link>
 
-            {/* Opción B: ruta dedicada */}
             <Link className="btn" to="/contact">
               Contact
             </Link>

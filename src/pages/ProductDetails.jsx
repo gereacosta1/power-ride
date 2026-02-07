@@ -1,4 +1,4 @@
-//src/pages/ProductDetails.jsx
+// src/pages/ProductDetails.jsx
 import React, { useMemo, useState } from "react";
 import { useParams, Link } from "react-router-dom";
 import { getProductBySlug } from "../data/products.js";
@@ -75,36 +75,62 @@ export default function ProductDetails() {
     }
   }
 
+  // show specs as chips (keeps existing data)
+  const specs = Array.isArray(product.specs) ? product.specs : [];
+
   return (
     <div className="container" style={{ paddingTop: 18, paddingBottom: 18 }}>
-      <div style={{ display: "grid", gridTemplateColumns: "1.1fr .9fr", gap: 16, alignItems: "start" }}>
-        <div className="card" style={{ overflow: "hidden" }}>
-          <img
-            src={product.image}
-            alt={product.name}
-            style={{ width: "100%", height: 420, objectFit: "cover", display: "block" }}
-          />
+      <div className="pd-grid">
+        {/* Media */}
+        <div className="card pd-media">
+          <div className="pd-media-inner">
+            <img
+              src={product.image}
+              alt={product.name}
+            />
+          </div>
         </div>
 
-        <div className="card card-pad">
-          <div className="h-eyebrow">{product.category || "Scooter"}</div>
-          <h2 style={{ margin: "10px 0 6", letterSpacing: "-.02em" }}>{product.name}</h2>
+        {/* Details */}
+        <div className="card card-pad pd-panel">
+          <div className="pd-top">
+            <div>
+              <div className="h-eyebrow">{product.category || "Scooter"}</div>
+              <h2 style={{ margin: "10px 0 6", letterSpacing: "-.02em" }}>{product.name}</h2>
+            </div>
 
-          <div style={{ display: "flex", alignItems: "baseline", justifyContent: "space-between", gap: 10, flexWrap: "wrap" }}>
-            <div style={{ fontSize: 22, fontWeight: 900 }}>{usd(product.price)}</div>
+            {product.badge ? (
+              <div style={{ display: "flex", alignItems: "center" }}>
+                <span className="badge">{product.badge}</span>
+              </div>
+            ) : null}
+          </div>
+
+          <div className="pd-price">
+            <div style={{ fontSize: 24, fontWeight: 900 }}>{usd(product.price)}</div>
             <div className="small">
-              As low as <span style={{ color: "var(--neon)" }}>${(product.price / 12).toFixed(2)}/mo</span> with Affirm (example)
+              As low as{" "}
+              <span style={{ color: "var(--neon)" }}>${(product.price / 12).toFixed(2)}/mo</span>{" "}
+              with Affirm (example)
             </div>
           </div>
 
-          <p className="small" style={{ marginTop: 10 }}>{product.short}</p>
-
-          <div style={{ marginTop: 10 }}>
-            <div style={{ fontWeight: 800, marginBottom: 6 }}>Specs</div>
-            <ul className="small" style={{ margin: 0, paddingLeft: 18 }}>
-              {product.specs?.map((s) => <li key={s} style={{ marginBottom: 6 }}>{s}</li>)}
-            </ul>
+          <div className="pd-note">
+            <div className="small" style={{ margin: 0, opacity: 0.95 }}>
+              {product.short}
+            </div>
           </div>
+
+          {specs.length ? (
+            <div style={{ marginTop: 12 }}>
+              <div style={{ fontWeight: 800, marginBottom: 8 }}>Specs</div>
+              <div className="pd-specs">
+                {specs.map((s) => (
+                  <span key={s} className="pd-spec">{s}</span>
+                ))}
+              </div>
+            </div>
+          ) : null}
 
           {err && (
             <div className="card" style={{ marginTop: 12, padding: 12, borderColor: "rgba(255,80,80,.35)" }}>
@@ -113,12 +139,12 @@ export default function ProductDetails() {
             </div>
           )}
 
-          <div style={{ display: "flex", gap: 10, marginTop: 14, flexWrap: "wrap" }}>
-            <button className="btn btn-primary" onClick={startAffirmCheckout} disabled={busy}>
+          <div className="pd-actions">
+            <button className="btn btn-primary" onClick={startAffirmCheckout} disabled={busy} type="button">
               {busy ? "Starting..." : "Checkout with Affirm"}
             </button>
 
-            <button className="btn" onClick={addToCart}>
+            <button className="btn" onClick={addToCart} type="button">
               {added ? "Added" : "Add to cart"}
             </button>
 
