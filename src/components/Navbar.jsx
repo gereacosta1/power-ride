@@ -1,3 +1,4 @@
+// src/components/Navbar.jsx
 import React from "react";
 import { Link, NavLink, useLocation } from "react-router-dom";
 import { useCart } from "../context/CartContext.jsx";
@@ -47,7 +48,7 @@ export default function Navbar() {
             </Link>
 
             <Link className="btn btn-primary" to="/catalog">
-              Shop Scooters
+              Shop now
             </Link>
           </div>
         </div>
@@ -75,7 +76,7 @@ function CartBadge({ count }) {
         background: "var(--neon)",
         color: "#06150d",
         border: "1px solid rgba(0,0,0,.25)",
-        lineHeight: 1
+        lineHeight: 1,
       }}
     >
       {count}

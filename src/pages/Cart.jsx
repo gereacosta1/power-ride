@@ -1,4 +1,3 @@
-// src/pages/Cart.jsx
 import React, { useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import { useCart } from "../context/CartContext.jsx";
@@ -197,8 +196,8 @@ export default function Cart() {
 
               <div className="hr" />
 
-              {/* Keep compact styling, but the component now always includes the TILA example text */}
-              <AffirmDisclosure compact id="affirm-terms-cart" />
+              {/* En Cart no estás ofreciendo "$X/mo", así que el ejemplo TILA no es obligatorio acá */}
+              <AffirmDisclosure compact showExample={false} />
             </div>
           </div>
         )}

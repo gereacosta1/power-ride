@@ -1,4 +1,3 @@
-// src/pages/ProductDetails.jsx
 import React, { useMemo, useState } from "react";
 import { useParams, Link } from "react-router-dom";
 import { getProductBySlug } from "../data/products.js";
@@ -77,7 +76,6 @@ export default function ProductDetails() {
     }
   }
 
-  // show specs as chips (keeps existing data)
   const specs = Array.isArray(product.specs) ? product.specs : [];
 
   return (
@@ -94,7 +92,7 @@ export default function ProductDetails() {
         <div className="card card-pad pd-panel">
           <div className="pd-top">
             <div>
-              <div className="h-eyebrow">{product.category || "Scooter"}</div>
+              <div className="h-eyebrow">{product.category || "Product"}</div>
               <h2 style={{ margin: "10px 0 6", letterSpacing: "-.02em" }}>
                 {product.name}
               </h2>
@@ -143,9 +141,7 @@ export default function ProductDetails() {
               style={{ marginTop: 12, padding: 12, borderColor: "rgba(255,80,80,.35)" }}
             >
               <div style={{ fontWeight: 800 }}>Checkout error</div>
-              <div className="small" style={{ marginTop: 6 }}>
-                {err}
-              </div>
+              <div className="small" style={{ marginTop: 6 }}>{err}</div>
             </div>
           )}
 
@@ -163,18 +159,14 @@ export default function ProductDetails() {
               {added ? "Added" : "Add to cart"}
             </button>
 
-            <Link className="btn" to="/cart">
-              Go to cart
-            </Link>
-            <Link className="btn" to="/catalog">
-              Back
-            </Link>
+            <Link className="btn" to="/cart">Go to cart</Link>
+            <Link className="btn" to="/catalog">Back</Link>
           </div>
 
           <div className="hr" />
 
-          {/* Keep compact styling, but the component now always includes the TILA example text */}
-          <AffirmDisclosure compact id="affirm-terms-product" />
+          {/* Acá SÍ mostramos el ejemplo TILA porque hay "$X/mo" en esta URL */}
+          <AffirmDisclosure showExample />
         </div>
       </div>
     </div>

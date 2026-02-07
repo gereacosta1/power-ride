@@ -5,9 +5,17 @@ import { products } from "../data/products.js";
 import { usd } from "../utils/money.js";
 import AffirmDisclosure from "../components/AffirmDisclosure.jsx";
 
+function categoryLabel(cat) {
+  const c = String(cat || "").toLowerCase();
+  if (c === "scooter") return "Electric scooters";
+  if (c === "solar") return "Solar energy";
+  if (c === "speaker") return "JBL speakers";
+  return c ? c.charAt(0).toUpperCase() + c.slice(1) : "Product";
+}
+
 export default function Home() {
-  const featured = useMemo(() => products.slice(0, 6), []);
-  const spotlight = useMemo(() => products[0], []);
+  const featured = useMemo(() => products.slice(0, 6), [products]);
+  const spotlight = useMemo(() => products[0], [products]);
 
   return (
     <div className="container" style={{ paddingBottom: 24 }}>
@@ -19,24 +27,21 @@ export default function Home() {
             <h1 className="h-title">
               Power <span className="glow">Ride</span> LLC
             </h1>
+
             <p className="h-sub">
-              Electric scooters only. Clean catalog, fast browsing, and flexible financing messaging.
+              Electric scooters, solar energy, and JBL speakers. Clean catalog, fast browsing, and flexible financing messaging.
               Built to look premium, load fast, and convert.
             </p>
 
             <div className="home-cta">
               <Link className="btn btn-primary" to="/catalog">
-                Browse scooters
+                Browse products
               </Link>
               <Link className="btn" to="/legal">
                 Financing details
               </Link>
               <a className="btn" href="#featured">
                 See featured
-              </a>
-              {/* Optional: jump straight to disclosure on Home */}
-              <a className="btn" href="#affirm-terms-home">
-                View terms
               </a>
             </div>
 
@@ -69,7 +74,7 @@ export default function Home() {
               <div>
                 <div className="h-eyebrow">Spotlight</div>
                 <div style={{ fontWeight: 900, marginTop: 8, fontSize: 18 }}>
-                  {spotlight?.name || "Featured scooter"}
+                  {spotlight?.name || "Featured product"}
                 </div>
                 <div className="small" style={{ marginTop: 6, opacity: 0.9 }}>
                   {spotlight?.short || "Popular pick — clean look and strong value."}
@@ -133,7 +138,7 @@ export default function Home() {
         <div className="home-head">
           <div>
             <div className="h-eyebrow">Featured lineup</div>
-            <h2 className="home-title">Top scooters right now</h2>
+            <h2 className="home-title">Top picks right now</h2>
             <p className="small" style={{ marginTop: 6 }}>
               Quick presentation to fill the homepage with real products and imagery.
               Tap any card to open the product.
@@ -150,7 +155,7 @@ export default function Home() {
             </div>
           </div>
         ) : (
-          <div className="home-slider" role="region" aria-label="Featured scooters">
+          <div className="home-slider" role="region" aria-label="Featured products">
             {featured.map((p) => (
               <Link key={p.id} to={`/product/${p.slug}`} className="slide card">
                 <div className="slide-media">
@@ -163,13 +168,17 @@ export default function Home() {
                 </div>
 
                 <div className="slide-body">
-                  <div className="small" style={{ opacity: 0.85 }}>{p.category || "Scooter"}</div>
+                  <div className="small" style={{ opacity: 0.85 }}>
+                    {categoryLabel(p.category)}
+                  </div>
                   <div className="slide-name">{p.name}</div>
 
                   <div className="slide-price">
                     <div style={{ fontWeight: 900 }}>{usd(p.price)}</div>
                     <div className="small">
-                      <span style={{ color: "var(--neon)" }}>${(p.price / 12).toFixed(2)}/mo</span>{" "}
+                      <span style={{ color: "var(--neon)" }}>
+                        ${(p.price / 12).toFixed(2)}/mo
+                      </span>{" "}
                       example
                     </div>
                   </div>
@@ -201,7 +210,7 @@ export default function Home() {
           <div className="card card-pad">
             <div style={{ fontWeight: 900, marginBottom: 6 }}>1) Presentation-first</div>
             <div className="small">
-              The slider showcases real scooters immediately. It fills space with product visuals while staying lightweight.
+              The slider showcases real products immediately. It fills space with visuals while staying lightweight.
             </div>
             <div className="hr" />
             <div className="small">Tip: keep featured = 6 for best mobile scroll.</div>
@@ -228,7 +237,7 @@ export default function Home() {
       </section>
 
       {/* MINI CATEGORY / PICKS (fills space) */}
-      <section className="home-section">
+      <section className="home-section" id="solar">
         <div className="home-head">
           <div>
             <div className="h-eyebrow">Quick picks</div>
@@ -240,15 +249,15 @@ export default function Home() {
         </div>
 
         <div className="home-picks">
-          <Pick title="Daily commute" desc="Lightweight, clean design, quick browse." cta="See scooters" to="/catalog" />
-          <Pick title="Performance" desc="Higher price range, higher spec feel." cta="View featured" to="#featured" asAnchor />
-          <Pick title="Financing" desc="Clear disclosure + legal page." cta="Read details" to="/legal" />
+          <Pick title="Electric scooters" desc="Fast browsing, clean UI, quick checkout." cta="Shop scooters" to="/catalog" />
+          <Pick title="Solar energy" desc="New section (products will be added)." cta="Open catalog" to="/catalog" />
+          <Pick title="JBL speakers" desc="Portable audio and party power." cta="Browse audio" to="/catalog" />
         </div>
       </section>
 
       {/* DISCLOSURE / COMPLIANCE (Home also advertises financing) */}
       <section className="home-section">
-        <AffirmDisclosure id="affirm-terms-home" />
+        <AffirmDisclosure showExample />
       </section>
 
       {/* FINAL CTA */}
@@ -260,12 +269,12 @@ export default function Home() {
               Browse the full catalog and build your cart
             </h2>
             <p className="small" style={{ marginTop: 8, maxWidth: 720 }}>
-              This homepage is now “filled” with real scooters, unique blocks and layout, and strong CTAs.
-              Next step is adding more products and refining copy per scooter.
+              This homepage is now filled with real products, unique blocks and layout, and strong CTAs.
+              Next step is adding more products and refining copy per product.
             </p>
 
             <div className="home-cta" style={{ marginTop: 14 }}>
-              <Link className="btn btn-primary" to="/catalog">Shop Scooters</Link>
+              <Link className="btn btn-primary" to="/catalog">Shop now</Link>
               <Link className="btn" to="/cart">Go to cart</Link>
             </div>
           </div>
