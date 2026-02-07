@@ -18,28 +18,17 @@ function specsObjectToList(obj) {
   });
 }
 
-function listToSpecs(arr) {
-  if (!Array.isArray(arr)) return [];
-  return arr.map((x) => String(x)).filter(Boolean);
+// Normaliza rutas de imágenes.
+// Si empieza con "/" la dejamos.
+// Si viene vacío, devolvemos "".
+function normalizeImage(path) {
+  const p = String(path || "").trim();
+  if (!p) return "";
+  if (p.startsWith("/")) return p;
+  return `/${p}`;
 }
 
-function normalizeCategory(raw) {
-  const c = String(raw || "").trim().toLowerCase();
-
-  // Scooters (main)
-  if (c === "scooter" || c === "scooters" || c === "electric scooters") return "scooter";
-
-  // Solar (reserved)
-  if (c === "solar" || c === "solar energy" || c === "solar-energy") return "solar";
-
-  // JBL / speakers
-  if (c === "speaker" || c === "speakers" || c === "jbl" || c === "audio") return "speaker";
-
-  // Keep other categories if you want them visible; otherwise return "other"
-  return c || "other";
-}
-
-// Source data (from Riders JSON you sent)
+// -------------------- SCOOTERS (tu JSON actual) --------------------
 const ridersJson = [
   {
     id: 1,
@@ -50,7 +39,7 @@ const ridersJson = [
     description: "Powerful and efficient electric scooter.",
     specs: { engine: "500cc", weight: "168kg", warranty: "12 months" },
     inStock: true,
-    badge: "New",
+    badge: "New"
   },
   {
     id: 2,
@@ -61,7 +50,7 @@ const ridersJson = [
     description: "High-performance electric scooter.",
     specs: { range: "120km", power: "5kW", "top-speed": "90km/h" },
     inStock: true,
-    badge: "12-Month Warranty",
+    badge: "12-Month Warranty"
   },
   {
     id: 3,
@@ -72,7 +61,7 @@ const ridersJson = [
     description: "High-performance bicycle tire.",
     specs: { size: "120/70 R17", compound: "dual" },
     inStock: true,
-    badge: "Bestseller",
+    badge: "Bestseller"
   },
   {
     id: 4,
@@ -83,7 +72,7 @@ const ridersJson = [
     description: "Compact, powerful Bluetooth speaker.",
     specs: { battery: "12h", waterproof: "IPX5" },
     inStock: true,
-    badge: "Hot",
+    badge: "Hot"
   },
   {
     id: 5,
@@ -94,7 +83,7 @@ const ridersJson = [
     description: "Compact, powerful Bluetooth speaker.",
     specs: { battery: "12h", waterproof: "IPX5" },
     inStock: true,
-    badge: "Hot",
+    badge: "Hot"
   },
   {
     id: 6,
@@ -105,7 +94,7 @@ const ridersJson = [
     description: "Compact, powerful Bluetooth speaker.",
     specs: { battery: "12h", waterproof: "IPX5" },
     inStock: true,
-    badge: "Hot",
+    badge: "Hot"
   },
   {
     id: 7,
@@ -116,7 +105,7 @@ const ridersJson = [
     description: "Compact, powerful Bluetooth speaker.",
     specs: { battery: "12h", waterproof: "IPX5" },
     inStock: true,
-    badge: "Hot",
+    badge: "Hot"
   },
   {
     id: 8,
@@ -127,7 +116,7 @@ const ridersJson = [
     description: "Compact, powerful Bluetooth speaker.",
     specs: { battery: "12h", waterproof: "IPX5" },
     inStock: true,
-    badge: "Hot",
+    badge: "Hot"
   },
   {
     id: 9,
@@ -138,88 +127,86 @@ const ridersJson = [
     description: "Compact, powerful Bluetooth speaker.",
     specs: { battery: "12h", waterproof: "IPX5" },
     inStock: true,
-    badge: "Hot",
-  },
+    badge: "Hot"
+  }
 ];
 
-// ---------- PARLANTES JBL ----------
-const jblJson = [
+// Adapt scooters
+const scooterProducts = ridersJson.map((p) => ({
+  id: String(p.id),
+  slug: slugify(p.title),
+  name: p.title,
+  category: p.category,
+  price: Number(p.price || 0),
+  image: normalizeImage(p.image),
+  short: p.description || "",
+  specs: specsObjectToList(p.specs),
+  badge: p.badge || "",
+  inStock: Boolean(p.inStock)
+}));
+
+// -------------------- JBL SPEAKERS (fix rutas a /public root) --------------------
+const jblProducts = [
   {
-    id: 21,
-    title: "JBL Charge 4",
-    category: "speaker",
+    id: "21",
+    name: "JBL Charge 4",
+    category: "audio",
     price: 150,
-    image: "/IMG/jbl-charge-4.jpeg",
-    description:
-      "Parlante JBL Charge 4 con batería de larga duración y sonido potente para interior y exterior.",
+    image: "/jbl-charge-4.jpeg",
+    short: "Parlante JBL Charge 4 con batería de larga duración y sonido potente para interior y exterior.",
     specs: ["Bluetooth", "Resistente al agua", "Batería recargable"],
-    inStock: true,
     badge: "Featured",
+    inStock: true
   },
   {
-    id: 22,
-    title: "JBL GO 4",
-    category: "speaker",
+    id: "22",
+    name: "JBL GO 4",
+    category: "audio",
     price: 50,
-    image: "/IMG/jbl-go-4.jpeg",
-    description: "Parlante ultra compacto para llevar en el bolsillo. Ideal para uso diario.",
+    image: "/jbl-go-4.jpeg",
+    short: "Parlante ultra compacto para llevar en el bolsillo. Ideal para uso diario.",
     specs: ["Bluetooth", "Tamaño compacto", "Hasta 8h de batería"],
-    inStock: true,
     badge: "New",
+    inStock: true
   },
   {
-    id: 23,
-    title: "JBL Party Box",
-    category: "speaker",
+    id: "23",
+    name: "JBL Party Box",
+    category: "audio",
     price: 800,
-    image: "/IMG/jbl-party-box.jpeg",
-    description:
-      "JBL Party Box con luces LED y sonido de alta potencia, perfecto para eventos y fiestas.",
+    image: "/jbl-party-box.jpeg",
+    short: "JBL Party Box con luces LED y sonido de alta potencia, perfecto para eventos y fiestas.",
     specs: ["Alta potencia", "Luces LED", "Entradas para micrófono"],
-    inStock: true,
     badge: "Featured",
+    inStock: true
   },
   {
-    id: 24,
-    title: "JBL Flip 6",
-    category: "speaker",
+    id: "24",
+    name: "JBL Flip 6",
+    category: "audio",
     price: 200,
-    image: "/IMG/jbl-flip-6.jpeg",
-    description:
-      "Parlante JBL Flip 6 resistente al agua, con sonido equilibrado y fácil de transportar.",
+    image: "/jbl-flip-6.jpeg",
+    short: "Parlante JBL Flip 6 resistente al agua, con sonido equilibrado y fácil de transportar.",
     specs: ["Bluetooth", "Resistente al agua", "Diseño portátil"],
-    inStock: true,
     badge: "New",
-  },
-];
+    inStock: true
+  }
+].map((p) => ({
+  ...p,
+  slug: slugify(p.name),
+  image: normalizeImage(p.image),
+  specs: Array.isArray(p.specs) ? p.specs : []
+}));
 
-// Placeholder for Solar Energy (empty for now)
-const solarJson = [
-  // Add future products here with category: "solar"
-];
+// -------------------- SOLAR (placeholder, vacio por ahora) --------------------
+const solarProducts = []; // después tu cliente te pasa data y lo llenamos
 
-// Merge all sources
-const source = [...ridersJson, ...jblJson, ...solarJson];
-
-// Adapt to Power Ride format
-export const products = source.map((p) => {
-  const rawTitle = p.title || p.name || "";
-  const rawSpecs = p.specs;
-
-  return {
-    id: String(p.id),
-    slug: slugify(rawTitle),
-    name: rawTitle,
-    category: normalizeCategory(p.category),
-    price: Number(p.price || 0),
-    image: p.image,
-    short: p.description || "",
-    specs: Array.isArray(rawSpecs) ? listToSpecs(rawSpecs) : specsObjectToList(rawSpecs),
-    badge: p.badge || "",
-    inStock: p.inStock !== false,
-  };
-});
+export const products = [...scooterProducts, ...jblProducts, ...solarProducts];
 
 export function getProductBySlug(slug) {
   return products.find((p) => p.slug === slug);
+}
+
+export function getProductsByCategory(category) {
+  return products.filter((p) => (p.category || "").toLowerCase() === String(category || "").toLowerCase());
 }

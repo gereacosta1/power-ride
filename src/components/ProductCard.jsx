@@ -7,6 +7,7 @@ import { useCart } from "../context/CartContext.jsx";
 export default function ProductCard({ p }) {
   const cart = useCart();
   const [added, setAdded] = useState(false);
+  const [imgOk, setImgOk] = useState(true);
 
   function add() {
     cart.addItem(p, 1);
@@ -15,13 +16,37 @@ export default function ProductCard({ p }) {
   }
 
   return (
-    <div className="card product-card">
+    <div className="card product-card" style={{ overflow: "hidden" }}>
       <div style={{ position: "relative" }}>
-        <img
-          src={p.image}
-          alt={p.name}
-          style={{ width: "100%", height: 220, objectFit: "contain", display: "block" }}
-        />
+        {imgOk && p.image ? (
+          <img
+            src={p.image}
+            alt={p.name}
+            onError={() => setImgOk(false)}
+            style={{
+              width: "100%",
+              height: 220,
+              objectFit: "contain",
+              display: "block",
+              background: "rgba(255,255,255,.02)"
+            }}
+            loading="lazy"
+          />
+        ) : (
+          <div
+            style={{
+              width: "100%",
+              height: 220,
+              display: "grid",
+              placeItems: "center",
+              background: "rgba(255,255,255,.03)",
+              color: "rgba(255,255,255,.75)",
+              fontWeight: 800
+            }}
+          >
+            Image missing
+          </div>
+        )}
 
         {p.badge ? (
           <div style={{ position: "absolute", top: 10, left: 10 }}>
@@ -31,9 +56,9 @@ export default function ProductCard({ p }) {
       </div>
 
       <div className="card-pad">
-        <div className="small" style={{ opacity: 0.85 }}>{p.category || "Scooter"}</div>
+        <div className="small" style={{ opacity: 0.85 }}>{p.category || "Item"}</div>
 
-        <div style={{ fontWeight: 900, marginTop: 2, lineHeight: 1.15 }}>
+        <div style={{ fontWeight: 900, marginTop: 6, lineHeight: 1.15 }}>
           {p.name}
         </div>
 
@@ -44,7 +69,7 @@ export default function ProductCard({ p }) {
             justifyContent: "space-between",
             gap: 10,
             flexWrap: "wrap",
-            marginTop: 2
+            marginTop: 8
           }}
         >
           <div style={{ fontSize: 18, fontWeight: 900 }}>{usd(p.price)}</div>
@@ -56,11 +81,11 @@ export default function ProductCard({ p }) {
           </div>
         </div>
 
-        <p className="small" style={{ marginTop: 2 }}>
+        <p className="small" style={{ marginTop: 10, opacity: 0.9 }}>
           {p.short}
         </p>
 
-        <div style={{ display: "flex", gap: 10, marginTop: 8, flexWrap: "wrap" }}>
+        <div style={{ display: "flex", gap: 10, marginTop: 12, flexWrap: "wrap" }}>
           <Link className="btn btn-primary" to={`/product/${p.slug}`}>
             View
           </Link>

@@ -27,6 +27,9 @@ export default function Navbar() {
             <NavLink to="/catalog" className={linkClass}>
               Catalog
             </NavLink>
+            <NavLink to="/solar" className={linkClass}>
+              Solar energy
+            </NavLink>
             <NavLink to="/legal" className={linkClass}>
               Financing &amp; Legal
             </NavLink>
@@ -76,7 +79,7 @@ function CartBadge({ count }) {
         background: "var(--neon)",
         color: "#06150d",
         border: "1px solid rgba(0,0,0,.25)",
-        lineHeight: 1,
+        lineHeight: 1
       }}
     >
       {count}

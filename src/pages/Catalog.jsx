@@ -1,79 +1,86 @@
+// src/pages/Catalog.jsx
 import React, { useMemo } from "react";
 import { products } from "../data/products.js";
 import ProductCard from "../components/ProductCard.jsx";
 import AffirmDisclosure from "../components/AffirmDisclosure.jsx";
 
-function Section({ title, subtitle, items }) {
-  return (
-    <section style={{ marginTop: 18 }}>
-      <div style={{ display: "flex", alignItems: "baseline", justifyContent: "space-between", gap: 12, flexWrap: "wrap" }}>
-        <div>
-          <div className="h-eyebrow">{subtitle}</div>
-          <h2 style={{ margin: "10px 0 0", letterSpacing: "-.02em" }}>{title}</h2>
-        </div>
-      </div>
-
-      {items.length ? (
-        <div style={{ marginTop: 16 }} className="grid">
-          {items.map((p) => (
-            <ProductCard key={p.id} p={p} />
-          ))}
-        </div>
-      ) : (
-        <div className="card card-pad" style={{ marginTop: 14, opacity: 0.95 }}>
-          <div style={{ fontWeight: 900 }}>Coming soon</div>
-          <div className="small" style={{ marginTop: 6 }}>
-            We’re adding products to this section.
-          </div>
-        </div>
-      )}
-    </section>
-  );
-}
-
 export default function Catalog() {
-  const groups = useMemo(() => {
-    const scooters = [];
-    const solar = [];
-    const speakers = [];
-    const other = [];
-
-    for (const p of products) {
-      if (!p?.inStock) continue;
-
-      if (p.category === "scooter") scooters.push(p);
-      else if (p.category === "solar") solar.push(p);
-      else if (p.category === "speaker") speakers.push(p);
-      else other.push(p);
-    }
-
-    return { scooters, solar, speakers, other };
-  }, []);
+  const scooters = useMemo(() => products.filter((p) => p.category === "scooter"), []);
+  const audio = useMemo(() => products.filter((p) => p.category === "audio"), []);
+  const solar = useMemo(() => products.filter((p) => p.category === "solar"), []);
 
   return (
     <div className="container" style={{ paddingTop: 18, paddingBottom: 18 }}>
       <div style={{ display: "flex", alignItems: "baseline", justifyContent: "space-between", gap: 12, flexWrap: "wrap" }}>
         <div>
           <div className="h-eyebrow">Catalog</div>
-          <h2 style={{ margin: "10px 0 0", letterSpacing: "-.02em" }}>Browse products</h2>
+          <h2 style={{ margin: "10px 0 0", letterSpacing: "-.02em" }}>Products</h2>
           <p className="small" style={{ marginTop: 8 }}>
-            Electric scooters, solar energy, and JBL speakers. Financing with Affirm available on eligible purchases.
+            Financing with Affirm available on eligible purchases.
           </p>
         </div>
       </div>
 
-      <Section title="Electric scooters" subtitle="Power Ride" items={groups.scooters} />
-      <Section title="Solar energy" subtitle="Power Ride" items={groups.solar} />
-      <Section title="JBL speakers" subtitle="Audio" items={groups.speakers} />
+      {/* SCOOTERS */}
+      <Section title="Electric scooters" eyebrow="Scooters" items={scooters} />
 
-      {groups.other.length ? (
-        <Section title="Other" subtitle="More" items={groups.other} />
-      ) : null}
+      {/* JBL / AUDIO */}
+      <Section title="JBL speakers" eyebrow="Audio" items={audio} />
+
+      {/* SOLAR */}
+      <section id="solar" style={{ marginTop: 18 }}>
+        <div style={{ display: "flex", alignItems: "baseline", justifyContent: "space-between", gap: 12, flexWrap: "wrap" }}>
+          <div>
+            <div className="h-eyebrow">Solar energy</div>
+            <h3 style={{ margin: "10px 0 0", letterSpacing: "-.02em" }}>Coming soon</h3>
+            <p className="small" style={{ marginTop: 8, opacity: 0.9 }}>
+              We’re adding products to this section.
+            </p>
+          </div>
+        </div>
+
+        {solar.length ? (
+          <div style={{ marginTop: 16 }} className="grid">
+            {solar.map((p) => <ProductCard key={p.id} p={p} />)}
+          </div>
+        ) : (
+          <div className="card card-pad" style={{ marginTop: 14 }}>
+            <div style={{ fontWeight: 900 }}>No solar products yet</div>
+            <div className="small" style={{ marginTop: 8, opacity: 0.9 }}>
+              Placeholder listo. Cuando tu cliente te pase productos, los cargamos acá.
+            </div>
+          </div>
+        )}
+      </section>
 
       {/* Compliance: disclosure MUST be on the same URL where Affirm is advertised */}
-      <div style={{ marginTop: 22 }}>
-        <AffirmDisclosure showExample />
+      <div style={{ marginTop: 18 }}>
+        <AffirmDisclosure />
       </div>
     </div>
+  );
+}
+
+function Section({ eyebrow, title, items }) {
+  return (
+    <section style={{ marginTop: 18 }}>
+      <div>
+        <div className="h-eyebrow">{eyebrow}</div>
+        <h3 style={{ margin: "10px 0 0", letterSpacing: "-.02em" }}>{title}</h3>
+      </div>
+
+      {!items.length ? (
+        <div className="card card-pad" style={{ marginTop: 14 }}>
+          <div style={{ fontWeight: 900 }}>No products yet</div>
+          <div className="small" style={{ marginTop: 8, opacity: 0.9 }}>
+            Coming soon.
+          </div>
+        </div>
+      ) : (
+        <div style={{ marginTop: 16 }} className="grid">
+          {items.map((p) => <ProductCard key={p.id} p={p} />)}
+        </div>
+      )}
+    </section>
   );
 }
