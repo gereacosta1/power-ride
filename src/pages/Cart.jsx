@@ -120,23 +120,25 @@ export default function Cart() {
                       <div className="cart-qty" aria-label="Quantity controls">
                         <button
                           className="btn"
-                          onClick={() => cart.setQty(it.slug, (it.qty || 1) - 1)}
+                          onClick={() => cart.setQty(it.slug, Number(it.qty || 1) - 1)}
                           type="button"
                         >
                           −
                         </button>
 
                         <input
-                          value={it.qty}
+                          value={String(it.qty ?? 1)}
                           onChange={(e) => cart.setQty(it.slug, e.target.value)}
                           inputMode="numeric"
                           className="input"
                           aria-label="Quantity"
+                          min="1"
+                          step="1"
                         />
 
                         <button
                           className="btn"
-                          onClick={() => cart.setQty(it.slug, (it.qty || 1) + 1)}
+                          onClick={() => cart.setQty(it.slug, Number(it.qty || 1) + 1)}
                           type="button"
                         >
                           +
@@ -197,8 +199,8 @@ export default function Cart() {
 
               <div className="hr" />
 
-              {/* Acá no hay "$X/mo", así que el ejemplo TILA NO es obligatorio.
-                  Pero sí conviene disclosure porque se promociona Affirm checkout en esta URL. */}
+              {/* Aquí NO hay "$X/mo", así que el ejemplo TILA no es obligatorio.
+                  Pero sí conviene el disclosure porque se promociona Affirm checkout en esta URL. */}
               <AffirmDisclosure compact showExample={false} />
             </div>
           </div>

@@ -7,17 +7,18 @@ export default function AffirmDisclosure({
   id = "affirm-disclosure",
 }) {
   // Texto base requerido (lenders disclosure)
-  // Nota: lo dejamos "verbatim" y hacemos los links clickeables.
+  // Nota: mantenemos el texto igual y hacemos links clickeables.
   const fullDisclosure = (
     <>
-      * Rates from 0–36% APR. Payment options through Affirm are subject to an eligibility check and are
-      provided by these lending partners:{" "}
+      Rates from 0–36% APR. Payment options through Affirm are subject to an
+      eligibility check and are provided by these lending partners:{" "}
       <a href="https://www.affirm.com/lenders" target="_blank" rel="noreferrer">
         affirm.com/lenders
       </a>
-      . Options depend on your purchase amount, and a down payment may be required. CA residents: Loans
-      by Affirm Loan Services, LLC are made or arranged pursuant to a California Financing Law license.
-      For licenses and disclosures, see{" "}
+      . Options depend on your purchase amount, and a down payment may be
+      required. CA residents: Loans by Affirm Loan Services, LLC are made or
+      arranged pursuant to a California Financing Law license. For licenses and
+      disclosures, see{" "}
       <a href="https://www.affirm.com/licenses" target="_blank" rel="noreferrer">
         affirm.com/licenses
       </a>
@@ -28,9 +29,14 @@ export default function AffirmDisclosure({
   // Ejemplo representativo (TILA) cuando se menciona un pago/mes
   const example = (
     <>
-      For example, a $800 purchase could be split into 12 monthly payments of $72.21 at 15% APR, or 4
-      interest-free payments of $200 every 2 weeks. Full terms:{" "}
-      <a href="https://www.affirm.com/disclosures" target="_blank" rel="noreferrer">
+      For example, a $800 purchase could be split into 12 monthly payments of
+      $72.21 at 15% APR, or 4 interest-free payments of $200 every 2 weeks. Full
+      terms:{" "}
+      <a
+        href="https://www.affirm.com/disclosures"
+        target="_blank"
+        rel="noreferrer"
+      >
         affirm.com/disclosures
       </a>
       .
@@ -76,6 +82,8 @@ export default function AffirmDisclosure({
       <div className="hr" />
 
       <div className="small" style={{ lineHeight: 1.45 }}>
+        {/* El asterisco del claim (* en cards) puede apuntar a este bloque */}
+        <span style={{ fontWeight: 800 }}>* </span>
         {fullDisclosure}
 
         {showExample && (

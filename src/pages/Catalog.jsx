@@ -35,9 +35,15 @@ export default function Catalog() {
           <h2 style={{ margin: "10px 0 0", letterSpacing: "-.02em" }}>
             Products
           </h2>
+
+          {/* En esta URL hay “with Affirm” + los cards muestran "$X/mo", así que:
+              - Disclosure en la misma URL ✅
+              - Ejemplo representativo con term+APR ✅ */}
           <p className="small" style={{ marginTop: 8 }}>
             Financing with Affirm available on eligible purchases.{" "}
-            <a href="#affirm-disclosure">*</a>
+            <a href="#affirm-disclosure" aria-label="Jump to Affirm disclosure">
+              *
+            </a>
           </p>
         </div>
       </div>

@@ -1,5 +1,4 @@
 // src/components/Navbar.jsx
-import React from "react";
 import { Link, NavLink, useLocation } from "react-router-dom";
 import { useCart } from "../context/CartContext.jsx";
 
@@ -7,7 +6,8 @@ export default function Navbar() {
   const cart = useCart();
   const { pathname } = useLocation();
 
-  const linkClass = ({ isActive }) => `nav-link${isActive ? " nav-link-active" : ""}`;
+  const linkClass = ({ isActive }) =>
+    `nav-link${isActive ? " nav-link-active" : ""}`;
 
   return (
     <header className="nav">
@@ -24,12 +24,15 @@ export default function Navbar() {
             <NavLink to="/" className={linkClass} end>
               Home
             </NavLink>
+
             <NavLink to="/catalog" className={linkClass}>
               Catalog
             </NavLink>
+
             <NavLink to="/solar" className={linkClass}>
               Solar energy
             </NavLink>
+
             <NavLink to="/legal" className={linkClass}>
               Financing &amp; Legal
             </NavLink>
@@ -79,7 +82,7 @@ function CartBadge({ count }) {
         background: "var(--neon)",
         color: "#06150d",
         border: "1px solid rgba(0,0,0,.25)",
-        lineHeight: 1
+        lineHeight: 1,
       }}
     >
       {count}
