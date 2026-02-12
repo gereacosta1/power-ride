@@ -32,11 +32,19 @@ export default function Catalog() {
         <div style={{ display: "flex", alignItems: "baseline", justifyContent: "space-between", gap: 12, flexWrap: "wrap" }}>
           <div>
             <div className="h-eyebrow">Solar energy</div>
-            <h3 style={{ margin: "10px 0 0", letterSpacing: "-.02em" }}>Coming soon</h3>
+            <h3 style={{ margin: "10px 0 0", letterSpacing: "-.02em" }}>
+              {solar.length ? "Solar products" : "Coming soon"}
+            </h3>
             <p className="small" style={{ marginTop: 8, opacity: 0.9 }}>
-              We’re adding products to this section.
+              {solar.length ? "Browse power stations, panels, and batteries." : "We’re adding products to this section."}
             </p>
           </div>
+
+          {solar.length ? (
+            <div style={{ display: "flex", gap: 10, flexWrap: "wrap" }}>
+              <LinkSolar />
+            </div>
+          ) : null}
         </div>
 
         {solar.length ? (
@@ -60,6 +68,15 @@ export default function Catalog() {
     </div>
   );
 }
+
+function LinkSolar() {
+  return (
+    <Link className="btn btn-primary" to="/solar">
+      Open Solar page
+    </Link>
+  );
+}
+
 
 function Section({ eyebrow, title, items }) {
   return (
