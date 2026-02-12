@@ -6,11 +6,19 @@ import { usd } from "../utils/money.js";
 import AffirmDisclosure from "../components/AffirmDisclosure.jsx";
 
 function categoryLabel(cat) {
-  const c = String(cat || "").toLowerCase();
+  const c = String(cat || "").toLowerCase().trim();
   if (c === "scooter") return "Electric scooters";
   if (c === "solar") return "Solar energy";
-  if (c === "speaker") return "JBL speakers";
+  if (c === "audio") return "JBL speakers";
+  if (c === "bicycle") return "E-bikes";
+  if (c === "motorcycle") return "Motorcycles";
   return c ? c.charAt(0).toUpperCase() + c.slice(1) : "Product";
+}
+
+function monthlyExample(price) {
+  const n = Number(price || 0);
+  if (!n) return "";
+  return (n / 12).toFixed(2);
 }
 
 export default function Home() {
@@ -29,8 +37,8 @@ export default function Home() {
             </h1>
 
             <p className="h-sub">
-              Electric scooters, solar energy, and JBL speakers. Clean catalog, fast browsing, and flexible financing messaging.
-              Built to look premium, load fast, and convert.
+              Electric scooters, solar energy, and JBL speakers. Clean catalog, fast browsing, and
+              flexible financing messaging. Built to look premium, load fast, and convert.
             </p>
 
             <div className="home-cta">
@@ -82,16 +90,24 @@ export default function Home() {
               </div>
 
               <div className="spot-price">
-                <div className="small" style={{ opacity: 0.85 }}>From</div>
+                <div className="small" style={{ opacity: 0.85 }}>
+                  From
+                </div>
                 <div style={{ fontWeight: 900, fontSize: 18 }}>
                   {spotlight ? usd(spotlight.price) : "$—"}
                 </div>
+
+                {/* Trigger term ($/mo) => MUST connect to disclosure on same URL */}
                 {spotlight?.price ? (
                   <div className="small">
+                    As low as{" "}
                     <span style={{ color: "var(--neon)" }}>
-                      ${(spotlight.price / 12).toFixed(2)}/mo
+                      ${monthlyExample(spotlight.price)}/mo
                     </span>{" "}
-                    example
+                    with Affirm{" "}
+                    <a href="#affirm-disclosure" className="small" style={{ opacity: 0.95 }}>
+                      *
+                    </a>
                   </div>
                 ) : null}
               </div>
@@ -140,18 +156,21 @@ export default function Home() {
             <div className="h-eyebrow">Featured lineup</div>
             <h2 className="home-title">Top picks right now</h2>
             <p className="small" style={{ marginTop: 6 }}>
-              Quick presentation to fill the homepage with real products and imagery.
-              Tap any card to open the product.
+              Quick presentation to fill the homepage with real products and imagery. Tap any card to
+              open the product.
             </p>
           </div>
-          <Link className="btn" to="/catalog">Open catalog</Link>
+          <Link className="btn" to="/catalog">
+            Open catalog
+          </Link>
         </div>
 
         {!featured.length ? (
           <div className="card card-pad" style={{ marginTop: 14 }}>
             <div style={{ fontWeight: 900 }}>No products yet</div>
             <div className="small" style={{ marginTop: 8 }}>
-              Add products in <code>src/data/products.js</code> and ensure images exist in <code>/public</code>.
+              Add products in <code>src/data/products.js</code> and ensure images exist in{" "}
+              <code>/public</code>.
             </div>
           </div>
         ) : (
@@ -175,11 +194,17 @@ export default function Home() {
 
                   <div className="slide-price">
                     <div style={{ fontWeight: 900 }}>{usd(p.price)}</div>
+
+                    {/* Trigger term ($/mo) => MUST connect to disclosure */}
                     <div className="small">
+                      As low as{" "}
                       <span style={{ color: "var(--neon)" }}>
-                        ${(p.price / 12).toFixed(2)}/mo
+                        ${monthlyExample(p.price)}/mo
                       </span>{" "}
-                      example
+                      with Affirm{" "}
+                      <a href="#affirm-disclosure" className="small" style={{ opacity: 0.95 }}>
+                        *
+                      </a>
                     </div>
                   </div>
 
@@ -200,8 +225,8 @@ export default function Home() {
             <div className="h-eyebrow">Built different</div>
             <h2 className="home-title">A homepage that doesn’t look like your other builds</h2>
             <p className="small" style={{ marginTop: 6 }}>
-              Editorial layout, spotlight module, slider with snap, and a “spec chips” style.
-              Same neon theme, but different structure.
+              Editorial layout, spotlight module, slider with snap, and a “spec chips” style. Same neon
+              theme, but different structure.
             </p>
           </div>
         </div>
@@ -210,7 +235,8 @@ export default function Home() {
           <div className="card card-pad">
             <div style={{ fontWeight: 900, marginBottom: 6 }}>1) Presentation-first</div>
             <div className="small">
-              The slider showcases real products immediately. It fills space with visuals while staying lightweight.
+              The slider showcases real products immediately. It fills space with visuals while staying
+              lightweight.
             </div>
             <div className="hr" />
             <div className="small">Tip: keep featured = 6 for best mobile scroll.</div>
@@ -228,7 +254,8 @@ export default function Home() {
           <div className="card card-pad">
             <div style={{ fontWeight: 900, marginBottom: 6 }}>3) Trust + compliance</div>
             <div className="small">
-              Financing disclosure appears on URLs where financing is advertised. Keep it visible and consistent.
+              Financing disclosure appears on URLs where financing is advertised. Keep it visible and
+              consistent.
             </div>
             <div className="hr" />
             <div className="small">You already have the Legal page for deeper details.</div>
@@ -249,13 +276,23 @@ export default function Home() {
         </div>
 
         <div className="home-picks">
-          <Pick title="Electric scooters" desc="Fast browsing, clean UI, quick checkout." cta="Shop scooters" to="/catalog" />
-          <Pick title="Solar energy" desc="New section (products will be added)." cta="Open catalog" to="/catalog" />
+          <Pick
+            title="Electric scooters"
+            desc="Fast browsing, clean UI, quick checkout."
+            cta="Shop scooters"
+            to="/catalog"
+          />
+          <Pick
+            title="Solar energy"
+            desc="Browse power stations, panels, and batteries."
+            cta="Open solar"
+            to="/solar"
+          />
           <Pick title="JBL speakers" desc="Portable audio and party power." cta="Browse audio" to="/catalog" />
         </div>
       </section>
 
-      {/* DISCLOSURE / COMPLIANCE (Home also advertises financing) */}
+      {/* DISCLOSURE / COMPLIANCE (Home advertises financing with $/mo) */}
       <section className="home-section">
         <AffirmDisclosure showExample />
       </section>
@@ -274,8 +311,12 @@ export default function Home() {
             </p>
 
             <div className="home-cta" style={{ marginTop: 14 }}>
-              <Link className="btn btn-primary" to="/catalog">Shop now</Link>
-              <Link className="btn" to="/cart">Go to cart</Link>
+              <Link className="btn btn-primary" to="/catalog">
+                Shop now
+              </Link>
+              <Link className="btn" to="/cart">
+                Go to cart
+              </Link>
             </div>
           </div>
         </div>
@@ -289,7 +330,9 @@ function Pick({ title, desc, cta, to, asAnchor }) {
     return (
       <a className="card card-pad pick" href={to}>
         <div style={{ fontWeight: 900, fontSize: 16 }}>{title}</div>
-        <div className="small" style={{ marginTop: 8, opacity: 0.9 }}>{desc}</div>
+        <div className="small" style={{ marginTop: 8, opacity: 0.9 }}>
+          {desc}
+        </div>
         <div style={{ marginTop: 12 }}>
           <span className="btn">{cta}</span>
         </div>
@@ -300,7 +343,9 @@ function Pick({ title, desc, cta, to, asAnchor }) {
   return (
     <Link className="card card-pad pick" to={to}>
       <div style={{ fontWeight: 900, fontSize: 16 }}>{title}</div>
-      <div className="small" style={{ marginTop: 8, opacity: 0.9 }}>{desc}</div>
+      <div className="small" style={{ marginTop: 8, opacity: 0.9 }}>
+        {desc}
+      </div>
       <div style={{ marginTop: 12 }}>
         <span className="btn">{cta}</span>
       </div>

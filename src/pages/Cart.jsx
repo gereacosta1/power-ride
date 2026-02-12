@@ -1,3 +1,4 @@
+// src/pages/Cart.jsx
 import React, { useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import { useCart } from "../context/CartContext.jsx";
@@ -196,7 +197,8 @@ export default function Cart() {
 
               <div className="hr" />
 
-              {/* En Cart no estás ofreciendo "$X/mo", así que el ejemplo TILA no es obligatorio acá */}
+              {/* Acá no hay "$X/mo", así que el ejemplo TILA NO es obligatorio.
+                  Pero sí conviene disclosure porque se promociona Affirm checkout en esta URL. */}
               <AffirmDisclosure compact showExample={false} />
             </div>
           </div>

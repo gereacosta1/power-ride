@@ -153,7 +153,8 @@ const jblProducts = [
     category: "audio",
     price: 150,
     image: "/jbl-charge-4.jpeg",
-    short: "Parlante JBL Charge 4 con batería de larga duración y sonido potente para interior y exterior.",
+    short:
+      "Parlante JBL Charge 4 con batería de larga duración y sonido potente para interior y exterior.",
     specs: ["Bluetooth", "Resistente al agua", "Batería recargable"],
     badge: "Featured",
     inStock: true
@@ -164,7 +165,8 @@ const jblProducts = [
     category: "audio",
     price: 50,
     image: "/jbl-go-4.jpeg",
-    short: "Parlante ultra compacto para llevar en el bolsillo. Ideal para uso diario.",
+    short:
+      "Parlante ultra compacto para llevar en el bolsillo. Ideal para uso diario.",
     specs: ["Bluetooth", "Tamaño compacto", "Hasta 8h de batería"],
     badge: "New",
     inStock: true
@@ -175,7 +177,8 @@ const jblProducts = [
     category: "audio",
     price: 800,
     image: "/jbl-party-box.jpeg",
-    short: "JBL Party Box con luces LED y sonido de alta potencia, perfecto para eventos y fiestas.",
+    short:
+      "JBL Party Box con luces LED y sonido de alta potencia, perfecto para eventos y fiestas.",
     specs: ["Alta potencia", "Luces LED", "Entradas para micrófono"],
     badge: "Featured",
     inStock: true
@@ -186,7 +189,8 @@ const jblProducts = [
     category: "audio",
     price: 200,
     image: "/jbl-flip-6.jpeg",
-    short: "Parlante JBL Flip 6 resistente al agua, con sonido equilibrado y fácil de transportar.",
+    short:
+      "Parlante JBL Flip 6 resistente al agua, con sonido equilibrado y fácil de transportar.",
     specs: ["Bluetooth", "Resistente al agua", "Diseño portátil"],
     badge: "New",
     inStock: true
@@ -198,9 +202,10 @@ const jblProducts = [
   specs: Array.isArray(p.specs) ? p.specs : []
 }));
 
-// -------------------- SOLAR (ahora SI, con tus imágenes) --------------------
+// -------------------- SOLAR (con tus imágenes) --------------------
 const SOLAR_IMG = "/img/solar-products";
 
+// Orden UX: power stations -> smart panel -> solar panel -> batteries
 const solarProducts = [
   {
     id: "s1",
@@ -208,7 +213,8 @@ const solarProducts = [
     category: "solar",
     price: 579.98,
     image: `${SOLAR_IMG}/ebl-ps-2400w-1843wh.webp`,
-    short: "Portable power station for home backup, camping and off-grid use. Multiple AC outlets and fast charging.",
+    short:
+      "Portable power station for home backup, camping and off-grid use. Multiple AC outlets and fast charging.",
     specs: ["2400W inverter", "1843Wh capacity", "Multiple AC/USB outputs"],
     badge: "Deal",
     inStock: true
@@ -219,7 +225,8 @@ const solarProducts = [
     category: "solar",
     price: 599.0,
     image: `${SOLAR_IMG}/fossibot-f2400-2048wh.webp`,
-    short: "High-capacity LiFePO4 power station with strong AC output and solar charging support.",
+    short:
+      "High-capacity LiFePO4 power station with strong AC output and solar charging support.",
     specs: ["2400W (peak higher)", "2048Wh LiFePO4", "Solar charging supported"],
     badge: "Popular",
     inStock: true
@@ -230,7 +237,8 @@ const solarProducts = [
     category: "solar",
     price: 1599.0,
     image: `${SOLAR_IMG}/ecoflow-delta-pro-3600wh.jpg`,
-    short: "Expandable home backup power with fast charging and strong AC output for demanding loads.",
+    short:
+      "Expandable home backup power with fast charging and strong AC output for demanding loads.",
     specs: ["3600Wh capacity", "Expandable ecosystem", "Fast charging"],
     badge: "Featured",
     inStock: true
@@ -241,7 +249,8 @@ const solarProducts = [
     category: "solar",
     price: 1999.0,
     image: `${SOLAR_IMG}/ecoflow-delta-pro-3-4096wh.jpg`,
-    short: "Next-gen LiFePO4 home backup with 120/240V output and high surge capacity (model dependent).",
+    short:
+      "Next-gen LiFePO4 home backup with 120/240V output and high surge capacity (model dependent).",
     specs: ["4096Wh LiFePO4", "120/240V output", "High surge capacity"],
     badge: "New",
     inStock: true
@@ -252,20 +261,10 @@ const solarProducts = [
     category: "solar",
     price: 1699.98,
     image: `${SOLAR_IMG}/oupes-6000-4096wh.webp`,
-    short: "High-output station for bigger appliances. Designed for backup and off-grid setups.",
+    short:
+      "High-output station for bigger appliances. Designed for backup and off-grid setups.",
     specs: ["6000W output (model dependent)", "4096Wh LiFePO4", "Expandable options"],
     badge: "High Power",
-    inStock: true
-  },
-  {
-    id: "s6",
-    name: "EcoFlow Smart Home Panel 2",
-    category: "solar",
-    price: 1599.0,
-    image: `${SOLAR_IMG}/ecoflow-smart-home-panel-2.webp`,
-    short: "Smart transfer panel to integrate EcoFlow systems with home circuits (compatible models required).",
-    specs: ["Smart load management", "Home integration", "EcoFlow ecosystem"],
-    badge: "Pro",
     inStock: true
   },
   {
@@ -274,9 +273,22 @@ const solarProducts = [
     category: "solar",
     price: 5999.95,
     image: `${SOLAR_IMG}/ecoflow-delta-pro-ultra.webp`,
-    short: "High-end expandable whole-home backup ecosystem (pricing varies by configuration).",
+    short:
+      "High-end expandable whole-home backup ecosystem (pricing varies by configuration).",
     specs: ["Whole-home capable (config)", "Expandable", "Premium system"],
     badge: "Ultra",
+    inStock: true
+  },
+  {
+    id: "s6",
+    name: "EcoFlow Smart Home Panel 2",
+    category: "solar",
+    price: 1599.0,
+    image: `${SOLAR_IMG}/ecoflow-smart-home-panel-2.webp`,
+    short:
+      "Smart transfer panel to integrate EcoFlow systems with home circuits (compatible models required).",
+    specs: ["Smart load management", "Home integration", "EcoFlow ecosystem"],
+    badge: "Pro",
     inStock: true
   },
   {
@@ -285,7 +297,8 @@ const solarProducts = [
     category: "solar",
     price: 459.99,
     image: `${SOLAR_IMG}/panel-450w-38v-fold.jpg`,
-    short: "Foldable high-watt solar panel for fast charging compatible power stations (check connectors).",
+    short:
+      "Foldable high-watt solar panel for fast charging compatible power stations (check connectors).",
     specs: ["450W rated", "38V", "Foldable portable design"],
     badge: "Panel",
     inStock: true
@@ -296,7 +309,8 @@ const solarProducts = [
     category: "solar",
     price: 169.99,
     image: `${SOLAR_IMG}/lifepo4-12v-100ah-bt.webp`,
-    short: "12V 100Ah LiFePO4 battery with Bluetooth monitoring and integrated BMS.",
+    short:
+      "12V 100Ah LiFePO4 battery with Bluetooth monitoring and integrated BMS.",
     specs: ["12V 100Ah", "Bluetooth monitoring", "BMS integrated"],
     badge: "Bluetooth",
     inStock: true
@@ -307,7 +321,8 @@ const solarProducts = [
     category: "solar",
     price: 112.99,
     image: `${SOLAR_IMG}/lifepo4-12v-100ah-group31.avif`,
-    short: "Group 31 form-factor 12V 100Ah LiFePO4 battery with integrated BMS for RV/solar setups.",
+    short:
+      "Group 31 form-factor 12V 100Ah LiFePO4 battery with integrated BMS for RV/solar setups.",
     specs: ["12V 100Ah", "Group 31 size", "BMS integrated"],
     badge: "Value",
     inStock: true
@@ -328,7 +343,6 @@ export function getProductBySlug(slug) {
 export function getProductsByCategory(category) {
   return products.filter(
     (p) =>
-      (p.category || "").toLowerCase() ===
-      String(category || "").toLowerCase()
+      (p.category || "").toLowerCase() === String(category || "").toLowerCase()
   );
 }

@@ -1,3 +1,4 @@
+// src/pages/ProductDetails.jsx
 import React, { useMemo, useState } from "react";
 import { useParams, Link } from "react-router-dom";
 import { getProductBySlug } from "../data/products.js";
@@ -107,12 +108,17 @@ export default function ProductDetails() {
 
           <div className="pd-price">
             <div style={{ fontSize: 24, fontWeight: 900 }}>{usd(product.price)}</div>
+
+            {/* Trigger term ($/mo) -> link + disclosure on same URL */}
             <div className="small">
               As low as{" "}
               <span style={{ color: "var(--neon)" }}>
-                ${(product.price / 12).toFixed(2)}/mo
+                ${(Number(product.price || 0) / 12).toFixed(2)}/mo
               </span>{" "}
-              with Affirm (example)
+              with Affirm{" "}
+              <a href="#affirm-disclosure" className="small" style={{ opacity: 0.95 }}>
+                *
+              </a>
             </div>
           </div>
 
@@ -141,7 +147,9 @@ export default function ProductDetails() {
               style={{ marginTop: 12, padding: 12, borderColor: "rgba(255,80,80,.35)" }}
             >
               <div style={{ fontWeight: 800 }}>Checkout error</div>
-              <div className="small" style={{ marginTop: 6 }}>{err}</div>
+              <div className="small" style={{ marginTop: 6 }}>
+                {err}
+              </div>
             </div>
           )}
 
@@ -159,13 +167,17 @@ export default function ProductDetails() {
               {added ? "Added" : "Add to cart"}
             </button>
 
-            <Link className="btn" to="/cart">Go to cart</Link>
-            <Link className="btn" to="/catalog">Back</Link>
+            <Link className="btn" to="/cart">
+              Go to cart
+            </Link>
+            <Link className="btn" to="/catalog">
+              Back
+            </Link>
           </div>
 
           <div className="hr" />
 
-          {/* Acá SÍ mostramos el ejemplo TILA porque hay "$X/mo" en esta URL */}
+          {/* Como hay "$X/mo" en esta URL, mostramos el ejemplo TILA acá */}
           <AffirmDisclosure showExample />
         </div>
       </div>

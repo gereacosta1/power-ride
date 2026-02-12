@@ -1,22 +1,43 @@
 // src/pages/Catalog.jsx
 import React, { useMemo } from "react";
+import { Link } from "react-router-dom";
 import { products } from "../data/products.js";
 import ProductCard from "../components/ProductCard.jsx";
 import AffirmDisclosure from "../components/AffirmDisclosure.jsx";
 
 export default function Catalog() {
-  const scooters = useMemo(() => products.filter((p) => p.category === "scooter"), []);
-  const audio = useMemo(() => products.filter((p) => p.category === "audio"), []);
-  const solar = useMemo(() => products.filter((p) => p.category === "solar"), []);
+  const scooters = useMemo(
+    () => products.filter((p) => p.category === "scooter"),
+    [products]
+  );
+  const audio = useMemo(
+    () => products.filter((p) => p.category === "audio"),
+    [products]
+  );
+  const solar = useMemo(
+    () => products.filter((p) => p.category === "solar"),
+    [products]
+  );
 
   return (
     <div className="container" style={{ paddingTop: 18, paddingBottom: 18 }}>
-      <div style={{ display: "flex", alignItems: "baseline", justifyContent: "space-between", gap: 12, flexWrap: "wrap" }}>
+      <div
+        style={{
+          display: "flex",
+          alignItems: "baseline",
+          justifyContent: "space-between",
+          gap: 12,
+          flexWrap: "wrap",
+        }}
+      >
         <div>
           <div className="h-eyebrow">Catalog</div>
-          <h2 style={{ margin: "10px 0 0", letterSpacing: "-.02em" }}>Products</h2>
+          <h2 style={{ margin: "10px 0 0", letterSpacing: "-.02em" }}>
+            Products
+          </h2>
           <p className="small" style={{ marginTop: 8 }}>
-            Financing with Affirm available on eligible purchases.
+            Financing with Affirm available on eligible purchases.{" "}
+            <a href="#affirm-disclosure">*</a>
           </p>
         </div>
       </div>
@@ -29,14 +50,24 @@ export default function Catalog() {
 
       {/* SOLAR */}
       <section id="solar" style={{ marginTop: 18 }}>
-        <div style={{ display: "flex", alignItems: "baseline", justifyContent: "space-between", gap: 12, flexWrap: "wrap" }}>
+        <div
+          style={{
+            display: "flex",
+            alignItems: "baseline",
+            justifyContent: "space-between",
+            gap: 12,
+            flexWrap: "wrap",
+          }}
+        >
           <div>
             <div className="h-eyebrow">Solar energy</div>
             <h3 style={{ margin: "10px 0 0", letterSpacing: "-.02em" }}>
               {solar.length ? "Solar products" : "Coming soon"}
             </h3>
             <p className="small" style={{ marginTop: 8, opacity: 0.9 }}>
-              {solar.length ? "Browse power stations, panels, and batteries." : "We’re adding products to this section."}
+              {solar.length
+                ? "Browse power stations, panels, and batteries."
+                : "We’re adding products to this section."}
             </p>
           </div>
 
@@ -49,7 +80,9 @@ export default function Catalog() {
 
         {solar.length ? (
           <div style={{ marginTop: 16 }} className="grid">
-            {solar.map((p) => <ProductCard key={p.id} p={p} />)}
+            {solar.map((p) => (
+              <ProductCard key={p.id} p={p} />
+            ))}
           </div>
         ) : (
           <div className="card card-pad" style={{ marginTop: 14 }}>
@@ -63,7 +96,7 @@ export default function Catalog() {
 
       {/* Compliance: disclosure MUST be on the same URL where Affirm is advertised */}
       <div style={{ marginTop: 18 }}>
-        <AffirmDisclosure />
+        <AffirmDisclosure showExample />
       </div>
     </div>
   );
@@ -76,7 +109,6 @@ function LinkSolar() {
     </Link>
   );
 }
-
 
 function Section({ eyebrow, title, items }) {
   return (
@@ -95,7 +127,9 @@ function Section({ eyebrow, title, items }) {
         </div>
       ) : (
         <div style={{ marginTop: 16 }} className="grid">
-          {items.map((p) => <ProductCard key={p.id} p={p} />)}
+          {items.map((p) => (
+            <ProductCard key={p.id} p={p} />
+          ))}
         </div>
       )}
     </section>
