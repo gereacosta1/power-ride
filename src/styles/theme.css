@@ -30,11 +30,14 @@ body{
   margin:0;
   font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
   color: var(--text);
+
+  /* Base gradient (no hard band edges) */
   background:
     radial-gradient(900px 520px at 18% 10%, rgba(38,255,106,.20), transparent 58%),
     radial-gradient(760px 520px at 82% 16%, rgba(0,255,168,.14), transparent 60%),
     radial-gradient(900px 700px at 50% 110%, rgba(38,255,106,.10), transparent 65%),
     linear-gradient(180deg, var(--bg) 0%, var(--bg2) 100%);
+
   position: relative;
   overflow-x: hidden;
 }
@@ -60,7 +63,46 @@ body::before{
   mix-blend-mode: overlay;
 }
 
-/* Keeps app content above overlay */
+/* ---- NEW: soft “band” transitions so you don't see hard cuts ---- */
+body::after{
+  content:"";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+
+  /* This creates wide, blurred transitions across the full width */
+  background:
+    /* top band fade */
+    linear-gradient(
+      to bottom,
+      rgba(38,255,106,.10) 0%,
+      rgba(38,255,106,.06) 8%,
+      transparent 22%
+    ),
+    /* middle band fade */
+    linear-gradient(
+      to bottom,
+      transparent 32%,
+      rgba(0,255,168,.06) 44%,
+      rgba(0,255,168,.03) 52%,
+      transparent 64%
+    ),
+    /* bottom band fade */
+    linear-gradient(
+      to bottom,
+      transparent 70%,
+      rgba(38,255,106,.06) 82%,
+      rgba(38,255,106,.03) 90%,
+      transparent 100%
+    );
+
+  opacity: .9;
+  filter: blur(14px);
+  transform: translateZ(0);
+}
+
+/* Keeps app content above overlays */
 #root{
   position: relative;
   z-index: 1;

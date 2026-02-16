@@ -1,0 +1,35 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256">
+  <defs>
+    <radialGradient id="g" cx="35%" cy="25%" r="80%">
+      <stop offset="0%" stop-color="#26ff6a"/>
+      <stop offset="45%" stop-color="#00ffa8"/>
+      <stop offset="100%" stop-color="#07110a"/>
+    </radialGradient>
+    <filter id="glow" x="-40%" y="-40%" width="180%" height="180%">
+      <feGaussianBlur stdDeviation="6" result="b"/>
+      <feMerge>
+        <feMergeNode in="b"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+  </defs>
+
+  <!-- background -->
+  <circle cx="128" cy="128" r="118" fill="url(#g)"/>
+  <circle cx="128" cy="128" r="118" fill="none" stroke="rgba(38,255,106,.35)" stroke-width="6"/>
+
+  <!-- subtle inner shine -->
+  <circle cx="92" cy="78" r="54" fill="rgba(255,255,255,.10)"/>
+
+  <!-- lightning bolt -->
+  <path filter="url(#glow)"
+        d="M146 22 L72 146 H122 L106 234 L184 106 H134 Z"
+        fill="#0b1410"
+        stroke="rgba(38,255,106,.45)"
+        stroke-width="6"
+        stroke-linejoin="round"/>
+
+  <!-- tiny “bolt tip” highlight -->
+  <path d="M151 28 L86 142 H128 L116 210 L174 112 H132 Z"
+        fill="rgba(255,255,255,.12)"/>
+</svg>
