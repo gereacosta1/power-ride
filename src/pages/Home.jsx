@@ -1,6 +1,6 @@
 // src/pages/Home.jsx
-import React, { useMemo } from "react";
-import { Link } from "react-router-dom";
+import React, { useEffect, useMemo } from "react";
+import { Link, useLocation } from "react-router-dom";
 import { products } from "../data/products.js";
 import { usd } from "../utils/money.js";
 import AffirmDisclosure from "../components/AffirmDisclosure.jsx";
@@ -24,6 +24,22 @@ function monthlyExample(price) {
 export default function Home() {
   const featured = useMemo(() => products.slice(0, 6), [products]);
   const spotlight = useMemo(() => products[0], [products]);
+  const location = useLocation();
+
+  // Smooth-scroll when we land on "/" with a hash (ex: "/#store")
+  useEffect(() => {
+    const hash = location?.hash || "";
+    if (!hash) return;
+
+    const id = hash.replace("#", "");
+    const el = document.getElementById(id);
+    if (!el) return;
+
+    // wait a tick so layout is ready
+    setTimeout(() => {
+      el.scrollIntoView({ behavior: "smooth", block: "start" });
+    }, 0);
+  }, [location?.hash]);
 
   return (
     <div className="container" style={{ paddingBottom: 24 }}>
@@ -101,9 +117,7 @@ export default function Home() {
                 {spotlight?.price ? (
                   <div className="small">
                     As low as{" "}
-                    <span style={{ color: "var(--neon)" }}>
-                      ${monthlyExample(spotlight.price)}/mo
-                    </span>{" "}
+                    <span style={{ color: "var(--neon)" }}>${monthlyExample(spotlight.price)}/mo</span>{" "}
                     with Affirm{" "}
                     <a href="#affirm-disclosure" className="small" style={{ opacity: 0.95 }}>
                       *
@@ -117,21 +131,13 @@ export default function Home() {
 
             <div className="spot-media">
               {spotlight?.image ? (
-                <img
-                  src={spotlight.image}
-                  alt={spotlight.name}
-                  className="spot-img"
-                  loading="lazy"
-                />
+                <img src={spotlight.image} alt={spotlight.name} className="spot-img" loading="lazy" />
               ) : (
                 <div className="spot-img" />
               )}
 
               <div className="spot-actions">
-                <Link
-                  className="btn btn-primary"
-                  to={spotlight ? `/product/${spotlight.slug}` : "/catalog"}
-                >
+                <Link className="btn btn-primary" to={spotlight ? `/product/${spotlight.slug}` : "/catalog"}>
                   View details
                 </Link>
                 <Link className="btn" to="/catalog">
@@ -198,10 +204,8 @@ export default function Home() {
                     {/* Trigger term ($/mo) => MUST connect to disclosure */}
                     <div className="small">
                       As low as{" "}
-                      <span style={{ color: "var(--neon)" }}>
-                        ${monthlyExample(p.price)}/mo
-                      </span>{" "}
-                      with Affirm{" "}
+                      <span style={{ color: "var(--neon)" }}>${monthlyExample(p.price)}/mo</span> with
+                      Affirm{" "}
                       <a href="#affirm-disclosure" className="small" style={{ opacity: 0.95 }}>
                         *
                       </a>
@@ -216,6 +220,149 @@ export default function Home() {
             ))}
           </div>
         )}
+      </section>
+
+      {/* OUR STORE / ABOUT (PHOTOS + TEXT + CTA) */}
+      <section id="store" className="home-section">
+        <div className="home-head">
+          <div>
+            <div className="h-eyebrow">Our store</div>
+            <h2 className="home-title">Real showroom. Real inventory. Same neon vibe.</h2>
+            <p className="small" style={{ marginTop: 6, maxWidth: 820 }}>
+              Not just an online catalog — we’re a physical shop too. Come check scooters in person,
+              compare options, and get help choosing the right setup. Clean, fast online browsing —
+              plus in-store support when you want it.
+            </p>
+          </div>
+
+          <div className="store-cta">
+            <Link className="btn btn-primary" to="/catalog">
+              Browse catalog
+            </Link>
+            <Link className="btn" to="/contact">
+              Contact / Visit
+            </Link>
+          </div>
+        </div>
+
+        <div className="store-wrap">
+          {/* Left: image grid */}
+          <div className="store-gallery" aria-label="Store photos">
+            <figure className="store-photo store-photo--big">
+              <img
+                src="/img/fisic-store/fisic-store-1.jpeg"
+                alt="Power Ride physical store entrance"
+                loading="lazy"
+              />
+              <figcaption className="store-cap">
+                <span className="store-tag">Showroom</span>
+                <span>Walk in • Browse • Pick up</span>
+              </figcaption>
+            </figure>
+
+            <figure className="store-photo">
+              <img
+                src="/img/fisic-store/fisic-store-2.jpeg"
+                alt="Inside view of Power Ride store"
+                loading="lazy"
+              />
+              <figcaption className="store-cap">
+                <span className="store-tag">Inventory</span>
+                <span>Scooters &amp; accessories</span>
+              </figcaption>
+            </figure>
+
+            <figure className="store-photo">
+              <img
+                src="/img/fisic-store/fisic-store-3.jpeg"
+                alt="Another inside view of Power Ride store"
+                loading="lazy"
+              />
+              <figcaption className="store-cap">
+                <span className="store-tag">Local</span>
+                <span>Miami-ready setups</span>
+              </figcaption>
+            </figure>
+
+            <figure className="store-photo store-photo--wide">
+              <img
+                src="/img/fisic-store/fisic-store-4.jpeg"
+                alt="Store desk and wall branding"
+                loading="lazy"
+              />
+              <figcaption className="store-cap">
+                <span className="store-tag">Support</span>
+                <span>Questions • guidance • checkout</span>
+              </figcaption>
+            </figure>
+          </div>
+
+          {/* Right: details panel */}
+          <div className="card store-panel">
+            <div className="store-panel-inner">
+              <div className="store-kicker">Why it matters</div>
+              <div className="store-title">
+                A store that feels <span className="glow">premium</span> online and offline
+              </div>
+
+              <div className="store-list">
+                <div className="store-li">
+                  <div className="store-bullet" />
+                  <div>
+                    <div className="store-li-title">Hands-on help</div>
+                    <div className="small">See models in person and get quick recommendations.</div>
+                  </div>
+                </div>
+
+                <div className="store-li">
+                  <div className="store-bullet" />
+                  <div>
+                    <div className="store-li-title">Pickup + support</div>
+                    <div className="small">Prefer local pickup? We can guide the whole process.</div>
+                  </div>
+                </div>
+
+                <div className="store-li">
+                  <div className="store-bullet" />
+                  <div>
+                    <div className="store-li-title">Same clean experience</div>
+                    <div className="small">Neon/glass design stays consistent across the site.</div>
+                  </div>
+                </div>
+              </div>
+
+              <div className="hr" />
+
+              <div className="store-stats">
+                <div className="store-stat">
+                  <div className="store-num">4+</div>
+                  <div className="small">Store photos</div>
+                </div>
+                <div className="store-stat">
+                  <div className="store-num">Fast</div>
+                  <div className="small">Mobile-first UI</div>
+                </div>
+                <div className="store-stat">
+                  <div className="store-num">Clear</div>
+                  <div className="small">Catalog + pricing</div>
+                </div>
+              </div>
+
+              <div className="store-actions">
+                <a className="btn" href="#support">
+                  Support
+                </a>
+                <Link className="btn btn-primary" to="/catalog">
+                  Shop now
+                </Link>
+              </div>
+
+              <div className="store-note small">
+                Tip: if you want a full “About” page later, we can reuse this block and expand it.
+              </div>
+            </div>
+          </div>
+        </div>
       </section>
 
       {/* WHY DIFFERENT (unique blocks) */}
@@ -276,18 +423,8 @@ export default function Home() {
         </div>
 
         <div className="home-picks">
-          <Pick
-            title="Electric scooters"
-            desc="Fast browsing, clean UI, quick checkout."
-            cta="Shop scooters"
-            to="/catalog"
-          />
-          <Pick
-            title="Solar energy"
-            desc="Browse power stations, panels, and batteries."
-            cta="Open solar"
-            to="/solar"
-          />
+          <Pick title="Electric scooters" desc="Fast browsing, clean UI, quick checkout." cta="Shop scooters" to="/catalog" />
+          <Pick title="Solar energy" desc="Browse power stations, panels, and batteries." cta="Open solar" to="/solar" />
           <Pick title="JBL speakers" desc="Portable audio and party power." cta="Browse audio" to="/catalog" />
         </div>
       </section>

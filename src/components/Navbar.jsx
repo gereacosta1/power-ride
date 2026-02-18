@@ -4,10 +4,12 @@ import { useCart } from "../context/CartContext.jsx";
 
 export default function Navbar() {
   const cart = useCart();
-  const { pathname } = useLocation();
+  const { pathname, hash } = useLocation();
 
-  const linkClass = ({ isActive }) =>
-    `nav-link${isActive ? " nav-link-active" : ""}`;
+  const linkClass = ({ isActive }) => `nav-link${isActive ? " nav-link-active" : ""}`;
+
+  const storeIsActive = pathname === "/" && hash === "#store";
+  const storeClass = `nav-link${storeIsActive ? " nav-link-active" : ""}`;
 
   return (
     <header className="nav">
@@ -28,6 +30,11 @@ export default function Navbar() {
             <NavLink to="/catalog" className={linkClass}>
               Catalog
             </NavLink>
+
+            {/* NEW: Store section on Home */}
+            <Link to="/#store" className={storeClass}>
+              Our store
+            </Link>
 
             <NavLink to="/solar" className={linkClass}>
               Solar energy
