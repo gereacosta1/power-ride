@@ -7,7 +7,7 @@ export default function Footer() {
   return (
     <footer className="footer" id="support">
       <div className="container">
-        <div className="surface" style={{ padding: 18, marginTop: 10 }}>
+        <div className="card" style={{ padding: 18, marginTop: 10 }}>
           <div
             style={{
               display: "flex",
@@ -45,7 +45,6 @@ export default function Footer() {
               </div>
             </div>
 
-            {/* Mantener 1 sola fuente de verdad para el disclosure */}
             <div style={{ maxWidth: 560, flex: "1 1 360px" }}>
               <AffirmDisclosure
                 compact

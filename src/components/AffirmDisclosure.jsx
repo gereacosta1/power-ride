@@ -82,7 +82,6 @@ export default function AffirmDisclosure({
       <div className="hr" />
 
       <div className="small" style={{ lineHeight: 1.45 }}>
-        {/* El asterisco del claim (* en cards) puede apuntar a este bloque */}
         <span style={{ fontWeight: 800 }}>* </span>
         {fullDisclosure}
 

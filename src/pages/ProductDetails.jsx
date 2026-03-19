@@ -39,9 +39,50 @@ export default function ProductDetails() {
     setTimeout(() => setAdded(false), 900);
   }
 
+  async function startStripeCheckout() {
+    setErr("");
+    setBusy(true);
+
+    try {
+      const res = await fetch("/api/create-stripe-checkout", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          items: [
+            {
+              display_name: product.name,
+              sku: product.id || product.slug,
+              slug: product.slug,
+              image: product.image,
+              unit_price: Math.round(Number(product.price || 0) * 100),
+              qty: 1,
+            },
+          ],
+          currency: "USD",
+          metadata: { product_slug: product.slug, source: "product_details" },
+        }),
+      });
+
+      const data = await res.json();
+      if (!res.ok) throw new Error(data?.error || "Stripe checkout failed");
+
+      if (data?.url) {
+        window.location.href = data.url;
+        return;
+      }
+
+      throw new Error("Missing Stripe checkout URL");
+    } catch (e) {
+      setErr(String(e?.message || e));
+    } finally {
+      setBusy(false);
+    }
+  }
+
   async function startAffirmCheckout() {
     setErr("");
     setBusy(true);
+
     try {
       const res = await fetch("/api/affirm-authorize", {
         method: "POST",
@@ -50,8 +91,8 @@ export default function ProductDetails() {
           items: [
             {
               display_name: product.name,
-              sku: product.id,
-              unit_price: Math.round(product.price * 100),
+              sku: product.id || product.slug,
+              unit_price: Math.round(Number(product.price || 0) * 100),
               qty: 1,
             },
           ],
@@ -69,6 +110,7 @@ export default function ProductDetails() {
         window.location.href = data.checkout_url;
         return;
       }
+
       throw new Error("Missing checkout_url from server");
     } catch (e) {
       setErr(String(e?.message || e));
@@ -82,14 +124,12 @@ export default function ProductDetails() {
   return (
     <div className="container" style={{ paddingTop: 18, paddingBottom: 18 }}>
       <div className="pd-grid">
-        {/* Media */}
         <div className="card pd-media">
           <div className="pd-media-inner">
             <img src={product.image} alt={product.name} />
           </div>
         </div>
 
-        {/* Details */}
         <div className="card card-pad pd-panel">
           <div className="pd-top">
             <div>
@@ -109,7 +149,6 @@ export default function ProductDetails() {
           <div className="pd-price">
             <div style={{ fontSize: 24, fontWeight: 900 }}>{usd(product.price)}</div>
 
-            {/* Trigger term ($/mo) -> link + disclosure on same URL */}
             <div className="small">
               As low as{" "}
               <span style={{ color: "var(--neon)" }}>
@@ -156,6 +195,15 @@ export default function ProductDetails() {
           <div className="pd-actions">
             <button
               className="btn btn-primary"
+              onClick={startStripeCheckout}
+              disabled={busy}
+              type="button"
+            >
+              {busy ? "Starting..." : "Checkout with Card"}
+            </button>
+
+            <button
+              className="btn"
               onClick={startAffirmCheckout}
               disabled={busy}
               type="button"
@@ -170,6 +218,7 @@ export default function ProductDetails() {
             <Link className="btn" to="/cart">
               Go to cart
             </Link>
+
             <Link className="btn" to="/catalog">
               Back
             </Link>
@@ -177,7 +226,6 @@ export default function ProductDetails() {
 
           <div className="hr" />
 
-          {/* Como hay "$X/mo" en esta URL, mostramos el ejemplo TILA acá */}
           <AffirmDisclosure showExample />
         </div>
       </div>

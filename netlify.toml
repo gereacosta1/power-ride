@@ -3,13 +3,18 @@
   publish = "dist"
   functions = "netlify/functions"
 
-[[redirects]]
-  from = "/*"
-  to = "/index.html"
-  status = 200
-
-# API helpers (opcional, prolijo)
+# API helpers
 [[redirects]]
   from = "/api/affirm-authorize"
   to = "/.netlify/functions/affirm-authorize"
+  status = 200
+
+[[redirects]]
+  from = "/api/create-stripe-checkout"
+  to = "/.netlify/functions/create-stripe-checkout"
+  status = 200
+
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
   status = 200

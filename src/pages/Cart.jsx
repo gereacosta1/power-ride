@@ -12,9 +12,50 @@ export default function Cart() {
 
   const lines = useMemo(() => cart.items, [cart.items]);
 
+  async function checkoutStripe() {
+    setErr("");
+    setBusy(true);
+
+    try {
+      if (!lines.length) throw new Error("Your cart is empty.");
+
+      const res = await fetch("/api/create-stripe-checkout", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          items: lines.map((it) => ({
+            display_name: it.name,
+            sku: it.id || it.slug,
+            slug: it.slug,
+            image: it.image,
+            unit_price: Math.round(Number(it.price || 0) * 100),
+            qty: Number(it.qty || 1),
+          })),
+          currency: "USD",
+          metadata: { source: "cart" },
+        }),
+      });
+
+      const data = await res.json();
+      if (!res.ok) throw new Error(data?.error || "Stripe checkout failed");
+
+      if (data?.url) {
+        window.location.href = data.url;
+        return;
+      }
+
+      throw new Error("Missing Stripe checkout URL");
+    } catch (e) {
+      setErr(String(e?.message || e));
+    } finally {
+      setBusy(false);
+    }
+  }
+
   async function checkoutAffirm() {
     setErr("");
     setBusy(true);
+
     try {
       if (!lines.length) throw new Error("Your cart is empty.");
 
@@ -42,6 +83,7 @@ export default function Cart() {
         window.location.href = data.checkout_url;
         return;
       }
+
       throw new Error("Missing checkout_url from server");
     } catch (e) {
       setErr(String(e?.message || e));
@@ -74,6 +116,7 @@ export default function Cart() {
             <Link className="btn" to="/catalog">
               Continue shopping
             </Link>
+
             {!!cart.items.length && (
               <button className="btn" onClick={cart.clear} type="button">
                 Clear cart
@@ -90,7 +133,6 @@ export default function Cart() {
           </div>
         ) : (
           <div className="cart-grid">
-            {/* Items */}
             <div className="cart-items">
               {lines.map((it) => (
                 <div key={it.slug} className="card cart-line">
@@ -154,7 +196,6 @@ export default function Cart() {
               ))}
             </div>
 
-            {/* Summary */}
             <div className="card card-pad cart-summary">
               <div style={{ fontWeight: 900, fontSize: 16 }}>Order summary</div>
 
@@ -185,6 +226,15 @@ export default function Cart() {
               <div style={{ display: "grid", gap: 10, marginTop: 14 }}>
                 <button
                   className="btn btn-primary"
+                  onClick={checkoutStripe}
+                  disabled={busy}
+                  type="button"
+                >
+                  {busy ? "Starting..." : "Checkout with Card"}
+                </button>
+
+                <button
+                  className="btn"
                   onClick={checkoutAffirm}
                   disabled={busy}
                   type="button"
@@ -199,8 +249,6 @@ export default function Cart() {
 
               <div className="hr" />
 
-              {/* Aquí NO hay "$X/mo", así que el ejemplo TILA no es obligatorio.
-                  Pero sí conviene el disclosure porque se promociona Affirm checkout en esta URL. */}
               <AffirmDisclosure compact showExample={false} />
             </div>
           </div>

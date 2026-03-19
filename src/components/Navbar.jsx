@@ -31,7 +31,6 @@ export default function Navbar() {
               Catalog
             </NavLink>
 
-            {/* NEW: Store section on Home */}
             <Link to="/#store" className={storeClass}>
               Our store
             </Link>
