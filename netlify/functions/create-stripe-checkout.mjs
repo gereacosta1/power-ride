@@ -6,6 +6,9 @@ function json(statusCode, body) {
     headers: {
       "Content-Type": "application/json",
       "Cache-Control": "no-store",
+      "Access-Control-Allow-Origin": "*",
+      "Access-Control-Allow-Methods": "POST, OPTIONS",
+      "Access-Control-Allow-Headers": "Content-Type",
     },
     body: JSON.stringify(body),
   };
@@ -54,7 +57,8 @@ export async function handler(event) {
   }
 
   try {
-    const secretKey = process.env.STRIPE_SECRET_KEY;
+    const secretKey = String(process.env.STRIPE_SECRET_KEY || "").trim();
+
     if (!secretKey) {
       return json(500, { error: "Missing STRIPE_SECRET_KEY" });
     }
@@ -72,16 +76,21 @@ export async function handler(event) {
 
     const successUrl = payload.success_url || `${siteBase}/cart?stripe=success`;
     const cancelUrl = payload.cancel_url || `${siteBase}/cart?stripe=cancel`;
+    const currency = String(payload.currency || "USD").toLowerCase();
 
     const line_items = items.map((it) => {
       const unitAmount = Math.round(Number(it.unit_price || 0));
       const quantity = Math.max(1, Number(it.qty || 1));
       const imageUrl = toAbsoluteImageUrl(it.image, siteBase);
 
+      if (!unitAmount || unitAmount < 1) {
+        throw new Error(`Invalid unit_price for item: ${it.display_name || "Product"}`);
+      }
+
       return {
         quantity,
         price_data: {
-          currency: (payload.currency || "USD").toLowerCase(),
+          currency,
           product_data: {
             name: it.display_name || "Product",
             ...(imageUrl ? { images: [imageUrl] } : {}),
@@ -97,6 +106,7 @@ export async function handler(event) {
 
     const session = await stripe.checkout.sessions.create({
       mode: "payment",
+      payment_method_types: ["card"],
       line_items,
       success_url: successUrl,
       cancel_url: cancelUrl,
