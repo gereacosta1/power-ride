@@ -107,6 +107,7 @@ export async function handler(event) {
 
     const session = await stripe.checkout.sessions.create({
       mode: "payment",
+      payment_method_types: ["card", "klarna", "afterpay_clearpay"],
       line_items,
       success_url: successUrl,
       cancel_url: cancelUrl,
