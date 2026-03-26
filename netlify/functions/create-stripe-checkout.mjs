@@ -73,7 +73,6 @@ export async function handler(event) {
     }
 
     const siteBase = getSiteBaseUrl(event);
-
     const successUrl = payload.success_url || `${siteBase}/cart?stripe=success`;
     const cancelUrl = payload.cancel_url || `${siteBase}/cart?stripe=cancel`;
     const currency = String(payload.currency || "USD").toLowerCase();
@@ -84,7 +83,9 @@ export async function handler(event) {
       const imageUrl = toAbsoluteImageUrl(it.image, siteBase);
 
       if (!unitAmount || unitAmount < 1) {
-        throw new Error(`Invalid unit_price for item: ${it.display_name || "Product"}`);
+        throw new Error(
+          `Invalid unit_price for item: ${it.display_name || "Product"}`
+        );
       }
 
       return {
@@ -106,7 +107,6 @@ export async function handler(event) {
 
     const session = await stripe.checkout.sessions.create({
       mode: "payment",
-      payment_method_types: ["card"],
       line_items,
       success_url: successUrl,
       cancel_url: cancelUrl,
@@ -119,6 +119,7 @@ export async function handler(event) {
     return json(200, {
       url: session.url,
       id: session.id,
+      payment_method_types: session.payment_method_types || [],
     });
   } catch (e) {
     return json(500, {
