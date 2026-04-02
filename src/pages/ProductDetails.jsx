@@ -15,6 +15,16 @@ export default function ProductDetails() {
   const [err, setErr] = useState("");
   const [added, setAdded] = useState(false);
 
+  const isKit = useMemo(
+    () => String(product?.type || "").toLowerCase() === "kit",
+    [product?.type]
+  );
+
+  const includes = useMemo(
+    () => (Array.isArray(product?.includes) ? product.includes : []),
+    [product?.includes]
+  );
+
   if (!product) {
     return (
       <div className="container" style={{ padding: 18 }}>
@@ -139,15 +149,16 @@ export default function ProductDetails() {
               </h2>
             </div>
 
-            {product.badge ? (
-              <div style={{ display: "flex", alignItems: "center" }}>
-                <span className="badge">{product.badge}</span>
-              </div>
-            ) : null}
+            <div style={{ display: "flex", gap: 8 }}>
+              {product.badge && <span className="badge">{product.badge}</span>}
+              {isKit && <span className="badge">KIT</span>}
+            </div>
           </div>
 
           <div className="pd-price">
-            <div style={{ fontSize: 24, fontWeight: 900 }}>{usd(product.price)}</div>
+            <div style={{ fontSize: 24, fontWeight: 900 }}>
+              {usd(product.price)}
+            </div>
 
             <div className="small">
               As low as{" "}
@@ -155,20 +166,42 @@ export default function ProductDetails() {
                 ${(Number(product.price || 0) / 12).toFixed(2)}/mo
               </span>{" "}
               with Affirm{" "}
-              <a href="#affirm-disclosure" className="small" style={{ opacity: 0.95 }}>
+              <a href="#affirm-disclosure" className="small">
                 *
               </a>
             </div>
           </div>
 
           <div className="pd-note">
-            <div className="small" style={{ margin: 0, opacity: 0.95 }}>
-              {product.short}
-            </div>
+            <div className="small">{product.short}</div>
           </div>
 
-          {specs.length ? (
-            <div style={{ marginTop: 12 }}>
+          {/* 🔥 KIT INCLUDES */}
+          {isKit && includes.length > 0 && (
+            <div style={{ marginTop: 16 }}>
+              <div style={{ fontWeight: 800, marginBottom: 8 }}>
+                What’s included
+              </div>
+
+              <ul
+                style={{
+                  paddingLeft: 18,
+                  display: "grid",
+                  gap: 6,
+                }}
+              >
+                {includes.map((item, i) => (
+                  <li key={i} className="small">
+                    {item}
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
+
+          {/* SPECS */}
+          {specs.length > 0 && (
+            <div style={{ marginTop: 16 }}>
               <div style={{ fontWeight: 800, marginBottom: 8 }}>Specs</div>
               <div className="pd-specs">
                 {specs.map((s) => (
@@ -178,17 +211,19 @@ export default function ProductDetails() {
                 ))}
               </div>
             </div>
-          ) : null}
+          )}
 
           {err && (
             <div
               className="card"
-              style={{ marginTop: 12, padding: 12, borderColor: "rgba(255,80,80,.35)" }}
+              style={{
+                marginTop: 12,
+                padding: 12,
+                borderColor: "rgba(255,80,80,.35)",
+              }}
             >
               <div style={{ fontWeight: 800 }}>Checkout error</div>
-              <div className="small" style={{ marginTop: 6 }}>
-                {err}
-              </div>
+              <div className="small">{err}</div>
             </div>
           )}
 

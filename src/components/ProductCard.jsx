@@ -16,8 +16,6 @@ function formatCategory(cat) {
   };
 
   if (map[c]) return map[c];
-
-  // Fallback: Title Case simple (ej "accessories" -> "Accessories")
   if (!c) return "Item";
   return c.charAt(0).toUpperCase() + c.slice(1);
 }
@@ -39,6 +37,16 @@ export default function ProductCard({ p }) {
   );
 
   const mo = useMemo(() => monthlyExample(p?.price), [p?.price]);
+
+  const isKit = useMemo(
+    () => String(p?.type || "").toLowerCase() === "kit",
+    [p?.type]
+  );
+
+  const includesPreview = useMemo(() => {
+    if (!Array.isArray(p?.includes)) return [];
+    return p.includes.filter(Boolean).slice(0, 3);
+  }, [p?.includes]);
 
   function add() {
     cart.addItem(p, 1);
@@ -79,11 +87,19 @@ export default function ProductCard({ p }) {
           </div>
         )}
 
-        {p?.badge ? (
-          <div style={{ position: "absolute", top: 10, left: 10 }}>
-            <span className="badge">{p.badge}</span>
-          </div>
-        ) : null}
+        <div
+          style={{
+            position: "absolute",
+            top: 10,
+            left: 10,
+            display: "flex",
+            gap: 8,
+            flexWrap: "wrap",
+          }}
+        >
+          {p?.badge ? <span className="badge">{p.badge}</span> : null}
+          {isKit ? <span className="badge">Kit</span> : null}
+        </div>
       </div>
 
       <div className="card-pad">
@@ -107,7 +123,6 @@ export default function ProductCard({ p }) {
         >
           <div style={{ fontSize: 18, fontWeight: 900 }}>{usd(p?.price)}</div>
 
-          {/* Trigger term ($/mo) => link to disclosure on same URL */}
           {mo ? (
             <div className="small">
               As low as{" "}
@@ -122,6 +137,45 @@ export default function ProductCard({ p }) {
         <p className="small" style={{ marginTop: 10, opacity: 0.9 }}>
           {p?.short}
         </p>
+
+        {isKit && includesPreview.length > 0 ? (
+          <div
+            style={{
+              marginTop: 10,
+              padding: "10px 12px",
+              border: "1px solid rgba(255,255,255,.08)",
+              borderRadius: 12,
+              background: "rgba(255,255,255,.02)",
+            }}
+          >
+            <div
+              className="small"
+              style={{ fontWeight: 800, marginBottom: 6, opacity: 0.95 }}
+            >
+              Includes
+            </div>
+
+            <ul
+              style={{
+                margin: 0,
+                paddingLeft: 18,
+                opacity: 0.9,
+              }}
+            >
+              {includesPreview.map((item, index) => (
+                <li key={`${p?.id || p?.slug || "product"}-include-${index}`}>
+                  <span className="small">{item}</span>
+                </li>
+              ))}
+            </ul>
+
+            {Array.isArray(p?.includes) && p.includes.length > includesPreview.length ? (
+              <div className="small" style={{ marginTop: 6, opacity: 0.7 }}>
+                + more included items
+              </div>
+            ) : null}
+          </div>
+        ) : null}
 
         <div
           style={{

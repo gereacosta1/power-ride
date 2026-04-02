@@ -1,6 +1,5 @@
 // src/data/products.js
 
-// Helpers
 function slugify(s) {
   return String(s || "")
     .trim()
@@ -18,9 +17,6 @@ function specsObjectToList(obj) {
   });
 }
 
-// Normaliza rutas de imágenes.
-// Si empieza con "/" la dejamos.
-// Si viene vacío, devolvemos "".
 function normalizeImage(path) {
   const p = String(path || "").trim();
   if (!p) return "";
@@ -28,7 +24,6 @@ function normalizeImage(path) {
   return `/${p}`;
 }
 
-// -------------------- SCOOTERS (tu JSON actual) --------------------
 const ridersJson = [
   {
     id: 1,
@@ -39,7 +34,7 @@ const ridersJson = [
     description: "Powerful and efficient electric scooter.",
     specs: { engine: "500cc", weight: "168kg", warranty: "12 months" },
     inStock: true,
-    badge: "New"
+    badge: "New",
   },
   {
     id: 2,
@@ -50,7 +45,7 @@ const ridersJson = [
     description: "High-performance electric scooter.",
     specs: { range: "120km", power: "5kW", "top-speed": "90km/h" },
     inStock: true,
-    badge: "12-Month Warranty"
+    badge: "12-Month Warranty",
   },
   {
     id: 3,
@@ -58,10 +53,10 @@ const ridersJson = [
     category: "bicycle",
     price: 2000,
     image: "/Freego-E4-Pro.png",
-    description: "High-performance bicycle tire.",
+    description: "High-performance electric bike.",
     specs: { size: "120/70 R17", compound: "dual" },
     inStock: true,
-    badge: "Bestseller"
+    badge: "Bestseller",
   },
   {
     id: 4,
@@ -69,10 +64,10 @@ const ridersJson = [
     category: "bicycle",
     price: 1000,
     image: "/Freego-eFlex-Raptor-E1.png",
-    description: "Compact, powerful Bluetooth speaker.",
+    description: "Compact electric bike for daily rides.",
     specs: { battery: "12h", waterproof: "IPX5" },
     inStock: true,
-    badge: "Hot"
+    badge: "Hot",
   },
   {
     id: 5,
@@ -80,10 +75,10 @@ const ridersJson = [
     category: "bicycle",
     price: 3400,
     image: "/Freego-Flash-F3-Pro.png",
-    description: "Compact, powerful Bluetooth speaker.",
+    description: "Premium electric bike with strong performance.",
     specs: { battery: "12h", waterproof: "IPX5" },
     inStock: true,
-    badge: "Hot"
+    badge: "Hot",
   },
   {
     id: 6,
@@ -91,10 +86,10 @@ const ridersJson = [
     category: "motorcycle",
     price: 3000,
     image: "/Freego-Shotgun-F2-Pro-Max.png",
-    description: "Compact, powerful Bluetooth speaker.",
+    description: "Powerful electric ride with aggressive styling.",
     specs: { battery: "12h", waterproof: "IPX5" },
     inStock: true,
-    badge: "Hot"
+    badge: "Hot",
   },
   {
     id: 7,
@@ -102,10 +97,10 @@ const ridersJson = [
     category: "motorcycle",
     price: 3800,
     image: "/Freego-Shotgun-Prime-F2-Pro.png",
-    description: "Compact, powerful Bluetooth speaker.",
+    description: "Electric performance model with premium finish.",
     specs: { battery: "12h", waterproof: "IPX5" },
     inStock: true,
-    badge: "Hot"
+    badge: "Hot",
   },
   {
     id: 8,
@@ -113,10 +108,10 @@ const ridersJson = [
     category: "motorcycle",
     price: 4000,
     image: "/Freego-X2-Dirt-Master-Off-Road-eBike.png",
-    description: "Compact, powerful Bluetooth speaker.",
+    description: "Off-road electric model built for adventure.",
     specs: { battery: "12h", waterproof: "IPX5" },
     inStock: true,
-    badge: "Hot"
+    badge: "Hot",
   },
   {
     id: 9,
@@ -124,14 +119,13 @@ const ridersJson = [
     category: "scooter",
     price: 150,
     image: "/Segway-Ninebot-S2-Self-Balancing-Scooter.png",
-    description: "Compact, powerful Bluetooth speaker.",
+    description: "Self-balancing personal electric scooter.",
     specs: { battery: "12h", waterproof: "IPX5" },
     inStock: true,
-    badge: "Hot"
-  }
+    badge: "Hot",
+  },
 ];
 
-// Adapt scooters
 const scooterProducts = ridersJson.map((p) => ({
   id: String(p.id),
   slug: slugify(p.title),
@@ -142,10 +136,11 @@ const scooterProducts = ridersJson.map((p) => ({
   short: p.description || "",
   specs: specsObjectToList(p.specs),
   badge: p.badge || "",
-  inStock: Boolean(p.inStock)
+  inStock: Boolean(p.inStock),
+  type: "single",
+  includes: [],
 }));
 
-// -------------------- JBL SPEAKERS (fix rutas a /public root) --------------------
 const jblProducts = [
   {
     id: "21",
@@ -157,7 +152,9 @@ const jblProducts = [
       "Parlante JBL Charge 4 con batería de larga duración y sonido potente para interior y exterior.",
     specs: ["Bluetooth", "Resistente al agua", "Batería recargable"],
     badge: "Featured",
-    inStock: true
+    inStock: true,
+    type: "single",
+    includes: [],
   },
   {
     id: "22",
@@ -169,7 +166,9 @@ const jblProducts = [
       "Parlante ultra compacto para llevar en el bolsillo. Ideal para uso diario.",
     specs: ["Bluetooth", "Tamaño compacto", "Hasta 8h de batería"],
     badge: "New",
-    inStock: true
+    inStock: true,
+    type: "single",
+    includes: [],
   },
   {
     id: "23",
@@ -181,7 +180,9 @@ const jblProducts = [
       "JBL Party Box con luces LED y sonido de alta potencia, perfecto para eventos y fiestas.",
     specs: ["Alta potencia", "Luces LED", "Entradas para micrófono"],
     badge: "Featured",
-    inStock: true
+    inStock: true,
+    type: "single",
+    includes: [],
   },
   {
     id: "24",
@@ -193,19 +194,20 @@ const jblProducts = [
       "Parlante JBL Flip 6 resistente al agua, con sonido equilibrado y fácil de transportar.",
     specs: ["Bluetooth", "Resistente al agua", "Diseño portátil"],
     badge: "New",
-    inStock: true
-  }
+    inStock: true,
+    type: "single",
+    includes: [],
+  },
 ].map((p) => ({
   ...p,
   slug: slugify(p.name),
   image: normalizeImage(p.image),
-  specs: Array.isArray(p.specs) ? p.specs : []
+  specs: Array.isArray(p.specs) ? p.specs : [],
+  includes: Array.isArray(p.includes) ? p.includes : [],
 }));
 
-// -------------------- SOLAR (con tus imágenes) --------------------
 const SOLAR_IMG = "/img/solar-products";
 
-// Orden UX: power stations -> smart panel -> solar panel -> batteries
 const solarProducts = [
   {
     id: "s1",
@@ -217,7 +219,9 @@ const solarProducts = [
       "Portable power station for home backup, camping and off-grid use. Multiple AC outlets and fast charging.",
     specs: ["2400W inverter", "1843Wh capacity", "Multiple AC/USB outputs"],
     badge: "Deal",
-    inStock: true
+    inStock: true,
+    type: "single",
+    includes: [],
   },
   {
     id: "s2",
@@ -229,7 +233,9 @@ const solarProducts = [
       "High-capacity LiFePO4 power station with strong AC output and solar charging support.",
     specs: ["2400W (peak higher)", "2048Wh LiFePO4", "Solar charging supported"],
     badge: "Popular",
-    inStock: true
+    inStock: true,
+    type: "single",
+    includes: [],
   },
   {
     id: "s3",
@@ -241,7 +247,9 @@ const solarProducts = [
       "Expandable home backup power with fast charging and strong AC output for demanding loads.",
     specs: ["3600Wh capacity", "Expandable ecosystem", "Fast charging"],
     badge: "Featured",
-    inStock: true
+    inStock: true,
+    type: "single",
+    includes: [],
   },
   {
     id: "s4",
@@ -250,10 +258,12 @@ const solarProducts = [
     price: 1999.0,
     image: `${SOLAR_IMG}/ecoflow-delta-pro-3-4096wh.jpg`,
     short:
-      "Next-gen LiFePO4 home backup with 120/240V output and high surge capacity (model dependent).",
+      "Next-gen LiFePO4 home backup with 120/240V output and high surge capacity.",
     specs: ["4096Wh LiFePO4", "120/240V output", "High surge capacity"],
     badge: "New",
-    inStock: true
+    inStock: true,
+    type: "single",
+    includes: [],
   },
   {
     id: "s5",
@@ -263,9 +273,11 @@ const solarProducts = [
     image: `${SOLAR_IMG}/oupes-6000-4096wh.webp`,
     short:
       "High-output station for bigger appliances. Designed for backup and off-grid setups.",
-    specs: ["6000W output (model dependent)", "4096Wh LiFePO4", "Expandable options"],
+    specs: ["6000W output", "4096Wh LiFePO4", "Expandable options"],
     badge: "High Power",
-    inStock: true
+    inStock: true,
+    type: "single",
+    includes: [],
   },
   {
     id: "s7",
@@ -274,10 +286,12 @@ const solarProducts = [
     price: 5999.95,
     image: `${SOLAR_IMG}/ecoflow-delta-pro-ultra.webp`,
     short:
-      "High-end expandable whole-home backup ecosystem (pricing varies by configuration).",
-    specs: ["Whole-home capable (config)", "Expandable", "Premium system"],
+      "High-end expandable whole-home backup ecosystem.",
+    specs: ["Whole-home capable", "Expandable", "Premium system"],
     badge: "Ultra",
-    inStock: true
+    inStock: true,
+    type: "single",
+    includes: [],
   },
   {
     id: "s6",
@@ -286,10 +300,12 @@ const solarProducts = [
     price: 1599.0,
     image: `${SOLAR_IMG}/ecoflow-smart-home-panel-2.webp`,
     short:
-      "Smart transfer panel to integrate EcoFlow systems with home circuits (compatible models required).",
+      "Smart transfer panel to integrate EcoFlow systems with home circuits.",
     specs: ["Smart load management", "Home integration", "EcoFlow ecosystem"],
     badge: "Pro",
-    inStock: true
+    inStock: true,
+    type: "single",
+    includes: [],
   },
   {
     id: "s8",
@@ -298,10 +314,12 @@ const solarProducts = [
     price: 459.99,
     image: `${SOLAR_IMG}/panel-450w-38v-fold.jpg`,
     short:
-      "Foldable high-watt solar panel for fast charging compatible power stations (check connectors).",
+      "Foldable high-watt solar panel for fast charging compatible power stations.",
     specs: ["450W rated", "38V", "Foldable portable design"],
     badge: "Panel",
-    inStock: true
+    inStock: true,
+    type: "single",
+    includes: [],
   },
   {
     id: "s9",
@@ -313,7 +331,9 @@ const solarProducts = [
       "12V 100Ah LiFePO4 battery with Bluetooth monitoring and integrated BMS.",
     specs: ["12V 100Ah", "Bluetooth monitoring", "BMS integrated"],
     badge: "Bluetooth",
-    inStock: true
+    inStock: true,
+    type: "single",
+    includes: [],
   },
   {
     id: "s10",
@@ -322,16 +342,111 @@ const solarProducts = [
     price: 112.99,
     image: `${SOLAR_IMG}/lifepo4-12v-100ah-group31.avif`,
     short:
-      "Group 31 form-factor 12V 100Ah LiFePO4 battery with integrated BMS for RV/solar setups.",
+      "Group 31 form-factor 12V 100Ah LiFePO4 battery with integrated BMS for RV and solar setups.",
     specs: ["12V 100Ah", "Group 31 size", "BMS integrated"],
     badge: "Value",
-    inStock: true
-  }
+    inStock: true,
+    type: "single",
+    includes: [],
+  },
+
+  // Nuevos productos cargados en /public/img
+  {
+    id: "s11",
+    name: "Kit Solar Off Grid",
+    category: "solar",
+    price: 1299,
+    image: "/img/kit-solar-off-grid.jpeg",
+    short:
+      "Complete off-grid solar kit for backup and independent energy setups.",
+    specs: [
+      "Off-grid setup",
+      "Ready-to-install bundle",
+      "Ideal for backup power",
+    ],
+    badge: "KIT",
+    inStock: true,
+    type: "kit",
+    includes: ["Solar panel", "Battery", "Inverter", "Cables"],
+  },
+  {
+    id: "s12",
+    name: "Combo Energia Solar",
+    category: "solar",
+    price: 1499,
+    image: "/img/combo-energia-solar.jpeg",
+    short:
+      "Solar combo package for home, business or backup energy applications.",
+    specs: [
+      "Bundle package",
+      "Solar energy solution",
+      "Great value combination",
+    ],
+    badge: "Combo",
+    inStock: true,
+    type: "kit",
+    includes: ["Solar components", "Main unit", "Accessories"],
+  },
+  {
+    id: "s13",
+    name: "Aguila 1000AVA",
+    category: "scooter",
+    price: 4000,
+    image: "/img/aguila-1000ava.jpeg",
+    short:
+      "72V electric scooter with modern design and strong urban performance.",
+    specs: [
+      "72V system",
+      "Electric model",
+      "Urban mobility",
+    ],
+    badge: "New",
+    inStock: true,
+    type: "single",
+    includes: [],
+  },
+  {
+    id: "s14",
+    name: "Ecarus",
+    category: "scooter",
+    price: 4300,
+    image: "/img/ecarus.jpeg",
+    short:
+      "Electric scooter model with premium look and practical daily use.",
+    specs: [
+      "Electric drive",
+      "Daily commuting",
+      "Modern design",
+    ],
+    badge: "Featured",
+    inStock: true,
+    type: "single",
+    includes: [],
+  },
+  {
+    id: "s15",
+    name: "Moto Roja",
+    category: "scooter",
+    price: 2900,
+    image: "/img/moto-roja.jpeg",
+    short:
+      "Compact red electric scooter ideal for city rides and everyday use.",
+    specs: [
+      "Compact body",
+      "Electric mobility",
+      "City use",
+    ],
+    badge: "Hot",
+    inStock: true,
+    type: "single",
+    includes: [],
+  },
 ].map((p) => ({
   ...p,
   slug: slugify(p.name),
   image: normalizeImage(p.image),
-  specs: Array.isArray(p.specs) ? p.specs : []
+  specs: Array.isArray(p.specs) ? p.specs : [],
+  includes: Array.isArray(p.includes) ? p.includes : [],
 }));
 
 export const products = [...scooterProducts, ...jblProducts, ...solarProducts];

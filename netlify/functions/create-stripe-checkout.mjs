@@ -107,7 +107,6 @@ export async function handler(event) {
 
     const session = await stripe.checkout.sessions.create({
       mode: "payment",
-      payment_method_types: ["card"],
       line_items,
       success_url: successUrl,
       cancel_url: cancelUrl,
@@ -115,6 +114,12 @@ export async function handler(event) {
       phone_number_collection: { enabled: true },
       allow_promotion_codes: true,
       metadata: payload.metadata || {},
+
+      // IMPORTANT:
+      // Do not force payment_method_types here.
+      // Stripe will use the payment methods enabled in the Dashboard
+      // and show eligible options like Klarna / Afterpay / Link automatically.
+      // payment_method_types: ["card"],
     });
 
     return json(200, {
