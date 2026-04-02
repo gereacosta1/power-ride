@@ -285,8 +285,7 @@ const solarProducts = [
     category: "solar",
     price: 5999.95,
     image: `${SOLAR_IMG}/ecoflow-delta-pro-ultra.webp`,
-    short:
-      "High-end expandable whole-home backup ecosystem.",
+    short: "High-end expandable whole-home backup ecosystem.",
     specs: ["Whole-home capable", "Expandable", "Premium system"],
     badge: "Ultra",
     inStock: true,
@@ -355,7 +354,7 @@ const solarProducts = [
     id: "s11",
     name: "Kit Solar Off Grid",
     category: "solar",
-    price: 1299,
+    price: 3500,
     image: "/img/kit-solar-off-grid.jpeg",
     short:
       "Complete off-grid solar kit for backup and independent energy setups.",
@@ -391,15 +390,11 @@ const solarProducts = [
     id: "s13",
     name: "Aguila 1000AVA",
     category: "scooter",
-    price: 4000,
+    price: 3000,
     image: "/img/aguila-1000ava.jpeg",
     short:
       "72V electric scooter with modern design and strong urban performance.",
-    specs: [
-      "72V system",
-      "Electric model",
-      "Urban mobility",
-    ],
+    specs: ["72V system", "Electric model", "Urban mobility"],
     badge: "New",
     inStock: true,
     type: "single",
@@ -411,13 +406,8 @@ const solarProducts = [
     category: "scooter",
     price: 4300,
     image: "/img/ecarus.jpeg",
-    short:
-      "Electric scooter model with premium look and practical daily use.",
-    specs: [
-      "Electric drive",
-      "Daily commuting",
-      "Modern design",
-    ],
+    short: "Electric scooter model with premium look and practical daily use.",
+    specs: ["Electric drive", "Daily commuting", "Modern design"],
     badge: "Featured",
     inStock: true,
     type: "single",
@@ -431,11 +421,7 @@ const solarProducts = [
     image: "/img/moto-roja.jpeg",
     short:
       "Compact red electric scooter ideal for city rides and everyday use.",
-    specs: [
-      "Compact body",
-      "Electric mobility",
-      "City use",
-    ],
+    specs: ["Compact body", "Electric mobility", "City use"],
     badge: "Hot",
     inStock: true,
     type: "single",
