@@ -1,8 +1,8 @@
-// src/components/ProductCard.jsx
-import React, { useMemo, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import { usd } from "../utils/money.js";
 import { useCart } from "../context/CartContext.jsx";
+import { supabase } from "../lib/supabase.js";
 
 function formatCategory(cat) {
   const c = String(cat || "").toLowerCase().trim();
@@ -30,6 +30,42 @@ export default function ProductCard({ p }) {
   const cart = useCart();
   const [added, setAdded] = useState(false);
   const [imgOk, setImgOk] = useState(true);
+  const [storeSettings, setStoreSettings] = useState({
+    paypal_enabled: false,
+    paypal_pay_later_enabled: true,
+    paypal_show_on_product_page: true,
+  });
+
+  useEffect(() => {
+    let active = true;
+
+    async function loadStoreSettings() {
+      const { data, error } = await supabase
+        .from("store_settings")
+        .select("*")
+        .limit(1)
+        .single();
+
+      if (error) {
+        console.error("loadStoreSettings error:", error);
+        return;
+      }
+
+      if (!active || !data) return;
+
+      setStoreSettings({
+        paypal_enabled: Boolean(data.paypal_enabled),
+        paypal_pay_later_enabled: Boolean(data.paypal_pay_later_enabled),
+        paypal_show_on_product_page: Boolean(data.paypal_show_on_product_page),
+      });
+    }
+
+    loadStoreSettings();
+
+    return () => {
+      active = false;
+    };
+  }, []);
 
   const categoryLabel = useMemo(
     () => formatCategory(p?.category),
@@ -48,14 +84,26 @@ export default function ProductCard({ p }) {
     return p.includes.filter(Boolean).slice(0, 3);
   }, [p?.includes]);
 
+  const showPayPalNote = useMemo(() => {
+    return Boolean(
+      storeSettings.paypal_enabled && storeSettings.paypal_show_on_product_page
+    );
+  }, [storeSettings]);
+
   function add() {
     cart.addItem(p, 1);
     setAdded(true);
-    setTimeout(() => setAdded(false), 900);
+    setTimeout(() => setAdded(false), 1200);
   }
 
   return (
-    <div className="card product-card" style={{ overflow: "hidden" }}>
+    <div
+      className="card product-card"
+      style={{
+        overflow: "hidden",
+        transition: "all .25s ease",
+      }}
+    >
       <div style={{ position: "relative" }}>
         {imgOk && p?.image ? (
           <img
@@ -83,7 +131,7 @@ export default function ProductCard({ p }) {
               fontWeight: 800,
             }}
           >
-            Image missing
+            No image
           </div>
         )}
 
@@ -103,40 +151,54 @@ export default function ProductCard({ p }) {
       </div>
 
       <div className="card-pad">
-        <div className="small" style={{ opacity: 0.85 }}>
+        <div className="small" style={{ opacity: 0.8 }}>
           {categoryLabel}
         </div>
 
-        <div style={{ fontWeight: 900, marginTop: 6, lineHeight: 1.15 }}>
+        <div
+          style={{
+            fontWeight: 900,
+            marginTop: 6,
+            lineHeight: 1.15,
+            fontSize: 18,
+          }}
+        >
           {p?.name}
         </div>
 
         <div
           style={{
-            display: "flex",
-            alignItems: "baseline",
-            justifyContent: "space-between",
-            gap: 10,
-            flexWrap: "wrap",
             marginTop: 8,
           }}
         >
-          <div style={{ fontSize: 18, fontWeight: 900 }}>{usd(p?.price)}</div>
+          <div style={{ fontSize: 20, fontWeight: 900 }}>
+            {usd(p?.price)}
+          </div>
 
           {mo ? (
-            <div className="small">
+            <div className="small" style={{ marginTop: 4 }}>
               As low as{" "}
-              <span style={{ color: "var(--neon)" }}>${mo}/mo</span> with Affirm{" "}
-              <a href="#affirm-disclosure" style={{ opacity: 0.95 }}>
-                *
-              </a>
+              <span style={{ color: "var(--neon)", fontWeight: 700 }}>
+                ${mo}/mo
+              </span>{" "}
+              with Affirm *
+            </div>
+          ) : null}
+
+          {showPayPalNote ? (
+            <div className="small" style={{ marginTop: 4, opacity: 0.9 }}>
+              {storeSettings.paypal_pay_later_enabled
+                ? "PayPal Pay Later available"
+                : "PayPal available"}
             </div>
           ) : null}
         </div>
 
-        <p className="small" style={{ marginTop: 10, opacity: 0.9 }}>
-          {p?.short}
-        </p>
+        {p?.short ? (
+          <p className="small" style={{ marginTop: 10, opacity: 0.9 }}>
+            {p.short}
+          </p>
+        ) : null}
 
         {isKit && includesPreview.length > 0 ? (
           <div
@@ -150,28 +212,27 @@ export default function ProductCard({ p }) {
           >
             <div
               className="small"
-              style={{ fontWeight: 800, marginBottom: 6, opacity: 0.95 }}
+              style={{
+                fontWeight: 800,
+                marginBottom: 6,
+                opacity: 0.95,
+              }}
             >
               Includes
             </div>
 
-            <ul
-              style={{
-                margin: 0,
-                paddingLeft: 18,
-                opacity: 0.9,
-              }}
-            >
+            <ul style={{ margin: 0, paddingLeft: 18 }}>
               {includesPreview.map((item, index) => (
-                <li key={`${p?.id || p?.slug || "product"}-include-${index}`}>
-                  <span className="small">{item}</span>
+                <li key={index} className="small">
+                  {item}
                 </li>
               ))}
             </ul>
 
-            {Array.isArray(p?.includes) && p.includes.length > includesPreview.length ? (
+            {Array.isArray(p?.includes) &&
+            p.includes.length > includesPreview.length ? (
               <div className="small" style={{ marginTop: 6, opacity: 0.7 }}>
-                + more included items
+                + more
               </div>
             ) : null}
           </div>
@@ -181,16 +242,29 @@ export default function ProductCard({ p }) {
           style={{
             display: "flex",
             gap: 10,
-            marginTop: 12,
-            flexWrap: "wrap",
+            marginTop: 14,
           }}
         >
-          <Link className="btn btn-primary" to={`/product/${p.slug}`}>
+          <Link
+            className="btn btn-primary"
+            to={`/product/${p.slug}`}
+            style={{ flex: 1 }}
+          >
             View
           </Link>
 
-          <button className="btn" onClick={add} type="button">
-            {added ? "Added" : "Add to cart"}
+          <button
+            className="btn"
+            onClick={add}
+            type="button"
+            style={{
+              flex: 1,
+              background: added ? "var(--neon)" : "",
+              color: added ? "#000" : "",
+              fontWeight: 700,
+            }}
+          >
+            {added ? "Added ✓" : "Add to cart"}
           </button>
         </div>
       </div>

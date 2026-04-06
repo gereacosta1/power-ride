@@ -1,19 +1,59 @@
-// src/pages/Catalog.jsx
-import React, { useMemo } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
-import { products } from "../data/products.js";
 import ProductCard from "../components/ProductCard.jsx";
 import AffirmDisclosure from "../components/AffirmDisclosure.jsx";
+import { supabase } from "../lib/supabase.js";
+
+function parseList(str) {
+  if (!str) return [];
+  return String(str)
+    .split(",")
+    .map((s) => s.trim())
+    .filter(Boolean);
+}
+
+function normalizeProduct(p) {
+  return {
+    ...p,
+    includes: parseList(p.includes),
+    specs: parseList(p.specs),
+    inStock: p.in_stock,
+  };
+}
 
 export default function Catalog() {
+  const [products, setProducts] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    loadProducts();
+  }, []);
+
+  async function loadProducts() {
+    setLoading(true);
+
+    const { data, error } = await supabase.from("products").select("*");
+
+    if (error) {
+      console.error(error);
+      setProducts([]);
+    } else {
+      setProducts((data || []).map(normalizeProduct));
+    }
+
+    setLoading(false);
+  }
+
   const scooters = useMemo(
     () => products.filter((p) => p.category === "scooter"),
     [products]
   );
+
   const audio = useMemo(
     () => products.filter((p) => p.category === "audio"),
     [products]
   );
+
   const solar = useMemo(
     () => products.filter((p) => p.category === "solar"),
     [products]
@@ -21,86 +61,21 @@ export default function Catalog() {
 
   return (
     <div className="container" style={{ paddingTop: 18, paddingBottom: 18 }}>
-      <div
-        style={{
-          display: "flex",
-          alignItems: "baseline",
-          justifyContent: "space-between",
-          gap: 12,
-          flexWrap: "wrap",
-        }}
-      >
-        <div>
-          <div className="h-eyebrow">Catalog</div>
-          <h2 style={{ margin: "10px 0 0", letterSpacing: "-.02em" }}>
-            Products
-          </h2>
-
-          {/* En esta URL hay “with Affirm” + los cards muestran "$X/mo", así que:
-              - Disclosure en la misma URL ✅
-              - Ejemplo representativo con term+APR ✅ */}
-          <p className="small" style={{ marginTop: 8 }}>
-            Financing with Affirm available on eligible purchases.{" "}
-            <a href="#affirm-disclosure" aria-label="Jump to Affirm disclosure">
-              *
-            </a>
-          </p>
-        </div>
+      <div>
+        <div className="h-eyebrow">Catalog</div>
+        <h2 style={{ marginTop: 10 }}>Products</h2>
       </div>
 
-      {/* SCOOTERS */}
-      <Section title="Electric scooters" eyebrow="Scooters" items={scooters} />
+      {loading ? (
+        <div style={{ marginTop: 20 }}>Loading...</div>
+      ) : (
+        <>
+          <Section title="Electric scooters" items={scooters} />
+          <Section title="JBL speakers" items={audio} />
+          <Section title="Solar products" items={solar} />
+        </>
+      )}
 
-      {/* JBL / AUDIO */}
-      <Section title="JBL speakers" eyebrow="Audio" items={audio} />
-
-      {/* SOLAR */}
-      <section id="solar" style={{ marginTop: 18 }}>
-        <div
-          style={{
-            display: "flex",
-            alignItems: "baseline",
-            justifyContent: "space-between",
-            gap: 12,
-            flexWrap: "wrap",
-          }}
-        >
-          <div>
-            <div className="h-eyebrow">Solar energy</div>
-            <h3 style={{ margin: "10px 0 0", letterSpacing: "-.02em" }}>
-              {solar.length ? "Solar products" : "Coming soon"}
-            </h3>
-            <p className="small" style={{ marginTop: 8, opacity: 0.9 }}>
-              {solar.length
-                ? "Browse power stations, panels, and batteries."
-                : "We’re adding products to this section."}
-            </p>
-          </div>
-
-          {solar.length ? (
-            <div style={{ display: "flex", gap: 10, flexWrap: "wrap" }}>
-              <LinkSolar />
-            </div>
-          ) : null}
-        </div>
-
-        {solar.length ? (
-          <div style={{ marginTop: 16 }} className="grid">
-            {solar.map((p) => (
-              <ProductCard key={p.id} p={p} />
-            ))}
-          </div>
-        ) : (
-          <div className="card card-pad" style={{ marginTop: 14 }}>
-            <div style={{ fontWeight: 900 }}>No solar products yet</div>
-            <div className="small" style={{ marginTop: 8, opacity: 0.9 }}>
-              Placeholder listo. Cuando tu cliente te pase productos, los cargamos acá.
-            </div>
-          </div>
-        )}
-      </section>
-
-      {/* Compliance: disclosure MUST be on the same URL where Affirm is advertised */}
       <div style={{ marginTop: 18 }}>
         <AffirmDisclosure showExample />
       </div>
@@ -108,31 +83,15 @@ export default function Catalog() {
   );
 }
 
-function LinkSolar() {
-  return (
-    <Link className="btn btn-primary" to="/solar">
-      Open Solar page
-    </Link>
-  );
-}
-
-function Section({ eyebrow, title, items }) {
+function Section({ title, items }) {
   return (
     <section style={{ marginTop: 18 }}>
-      <div>
-        <div className="h-eyebrow">{eyebrow}</div>
-        <h3 style={{ margin: "10px 0 0", letterSpacing: "-.02em" }}>{title}</h3>
-      </div>
+      <h3>{title}</h3>
 
       {!items.length ? (
-        <div className="card card-pad" style={{ marginTop: 14 }}>
-          <div style={{ fontWeight: 900 }}>No products yet</div>
-          <div className="small" style={{ marginTop: 8, opacity: 0.9 }}>
-            Coming soon.
-          </div>
-        </div>
+        <div style={{ marginTop: 12 }}>No products yet</div>
       ) : (
-        <div style={{ marginTop: 16 }} className="grid">
+        <div className="grid" style={{ marginTop: 12 }}>
           {items.map((p) => (
             <ProductCard key={p.id} p={p} />
           ))}
