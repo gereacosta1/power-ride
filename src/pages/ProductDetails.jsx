@@ -1,13 +1,14 @@
-// src/pages/ProductDetails.jsx
 import React, { useEffect, useMemo, useState } from "react";
 import { useParams, Link } from "react-router-dom";
 import { supabase } from "../lib/supabase.js";
 import { usd } from "../utils/money.js";
 import AffirmDisclosure from "../components/AffirmDisclosure.jsx";
 import { useCart } from "../context/CartContext.jsx";
+import { getProductBySlug } from "../data/products.js";
 
 function parseList(str) {
   if (!str) return [];
+  if (Array.isArray(str)) return str.filter(Boolean);
   return String(str)
     .split(",")
     .map((s) => s.trim())
@@ -28,6 +29,24 @@ function formatCategory(cat) {
   if (map[c]) return map[c];
   if (!c) return "Product";
   return c.charAt(0).toUpperCase() + c.slice(1);
+}
+
+function normalizeSupabaseProduct(data) {
+  return {
+    ...data,
+    includes: parseList(data.includes),
+    specs: parseList(data.specs),
+    inStock: Boolean(data.in_stock),
+  };
+}
+
+function normalizeLocalProduct(data) {
+  return {
+    ...data,
+    includes: Array.isArray(data.includes) ? data.includes : [],
+    specs: Array.isArray(data.specs) ? data.specs : [],
+    inStock: Boolean(data.inStock),
+  };
 }
 
 function loadPayPalSdk(clientId) {
@@ -191,21 +210,28 @@ export default function ProductDetails() {
       .from("products")
       .select("*")
       .eq("slug", slug)
-      .single();
+      .maybeSingle();
+
+    if (data) {
+      setProduct(normalizeSupabaseProduct(data));
+      setLoading(false);
+      return;
+    }
+
+    const localProduct = getProductBySlug(slug);
+
+    if (localProduct) {
+      setProduct(normalizeLocalProduct(localProduct));
+      setLoading(false);
+      return;
+    }
 
     if (error) {
       console.error(error);
-      setProduct(null);
       setErr(error.message || "Failed to load product");
-    } else {
-      setProduct({
-        ...data,
-        includes: parseList(data.includes),
-        specs: parseList(data.specs),
-        inStock: data.in_stock,
-      });
     }
 
+    setProduct(null);
     setLoading(false);
   }
 

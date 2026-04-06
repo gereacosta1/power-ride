@@ -1,24 +1,48 @@
 import React, { useEffect, useMemo, useState } from "react";
-import { Link } from "react-router-dom";
 import ProductCard from "../components/ProductCard.jsx";
 import AffirmDisclosure from "../components/AffirmDisclosure.jsx";
 import { supabase } from "../lib/supabase.js";
+import { products as localProducts } from "../data/products.js";
 
 function parseList(str) {
   if (!str) return [];
+  if (Array.isArray(str)) return str.filter(Boolean);
   return String(str)
     .split(",")
     .map((s) => s.trim())
     .filter(Boolean);
 }
 
-function normalizeProduct(p) {
+function normalizeSupabaseProduct(p) {
   return {
     ...p,
     includes: parseList(p.includes),
     specs: parseList(p.specs),
-    inStock: p.in_stock,
+    inStock: Boolean(p.in_stock),
   };
+}
+
+function normalizeLocalProduct(p) {
+  return {
+    ...p,
+    includes: Array.isArray(p.includes) ? p.includes : [],
+    specs: Array.isArray(p.specs) ? p.specs : [],
+    inStock: Boolean(p.inStock),
+  };
+}
+
+function mergeProducts(dbProducts, localProductsList) {
+  const map = new Map();
+
+  localProductsList.forEach((p) => {
+    map.set(String(p.slug), p);
+  });
+
+  dbProducts.forEach((p) => {
+    map.set(String(p.slug), p);
+  });
+
+  return Array.from(map.values());
 }
 
 export default function Catalog() {
@@ -32,20 +56,39 @@ export default function Catalog() {
   async function loadProducts() {
     setLoading(true);
 
-    const { data, error } = await supabase.from("products").select("*");
+    const localNormalized = localProducts.map(normalizeLocalProduct);
+
+    const { data, error } = await supabase
+      .from("products")
+      .select("*")
+      .order("created_at", { ascending: false });
 
     if (error) {
-      console.error(error);
-      setProducts([]);
-    } else {
-      setProducts((data || []).map(normalizeProduct));
+      console.error("Catalog loadProducts error:", error);
+      setProducts(localNormalized);
+      setLoading(false);
+      return;
     }
 
+    const dbNormalized = (data || []).map(normalizeSupabaseProduct);
+    const merged = mergeProducts(dbNormalized, localNormalized);
+
+    setProducts(merged);
     setLoading(false);
   }
 
   const scooters = useMemo(
     () => products.filter((p) => p.category === "scooter"),
+    [products]
+  );
+
+  const bicycles = useMemo(
+    () => products.filter((p) => p.category === "bicycle"),
+    [products]
+  );
+
+  const motorcycles = useMemo(
+    () => products.filter((p) => p.category === "motorcycle"),
     [products]
   );
 
@@ -71,6 +114,8 @@ export default function Catalog() {
       ) : (
         <>
           <Section title="Electric scooters" items={scooters} />
+          <Section title="E-bikes" items={bicycles} />
+          <Section title="Motorcycles" items={motorcycles} />
           <Section title="JBL speakers" items={audio} />
           <Section title="Solar products" items={solar} />
         </>
@@ -93,7 +138,7 @@ function Section({ title, items }) {
       ) : (
         <div className="grid" style={{ marginTop: 12 }}>
           {items.map((p) => (
-            <ProductCard key={p.id} p={p} />
+            <ProductCard key={p.slug || p.id} p={p} />
           ))}
         </div>
       )}
