@@ -1,16 +1,153 @@
-// src/pages/Cart.jsx
-import React, { useMemo, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import { useCart } from "../context/CartContext.jsx";
 import { usd } from "../utils/money.js";
 import AffirmDisclosure from "../components/AffirmDisclosure.jsx";
+import { supabase } from "../lib/supabase.js";
+
+function loadPayPalSdk(clientId) {
+  return new Promise((resolve, reject) => {
+    if (!clientId) {
+      reject(new Error("Missing PayPal client id"));
+      return;
+    }
+
+    const existing = document.querySelector(
+      `script[data-paypal-client-id="${clientId}"]`
+    );
+
+    if (existing) {
+      if (window.paypal) {
+        resolve(window.paypal);
+        return;
+      }
+
+      existing.addEventListener("load", () => resolve(window.paypal));
+      existing.addEventListener("error", () =>
+        reject(new Error("Failed to load PayPal SDK"))
+      );
+      return;
+    }
+
+    const script = document.createElement("script");
+    script.src = `https://www.paypal.com/sdk/js?client-id=${encodeURIComponent(
+      clientId
+    )}&components=hosted-buttons`;
+    script.async = true;
+    script.dataset.paypalClientId = clientId;
+
+    script.onload = () => {
+      if (window.paypal) resolve(window.paypal);
+      else reject(new Error("PayPal SDK loaded but window.paypal is missing"));
+    };
+
+    script.onerror = () => reject(new Error("Failed to load PayPal SDK"));
+    document.body.appendChild(script);
+  });
+}
 
 export default function Cart() {
   const cart = useCart();
   const [busy, setBusy] = useState(false);
   const [err, setErr] = useState("");
 
+  const [storeSettings, setStoreSettings] = useState({
+    paypal_enabled: false,
+    paypal_client_id: "",
+    paypal_hosted_button_id: "",
+    paypal_pay_later_enabled: true,
+  });
+  const [paypalReady, setPaypalReady] = useState(false);
+  const [paypalError, setPaypalError] = useState("");
+  const [paypalRenderedFor, setPaypalRenderedFor] = useState("");
+
   const lines = useMemo(() => cart.items, [cart.items]);
+
+  useEffect(() => {
+    loadStoreSettings();
+  }, []);
+
+  useEffect(() => {
+    let cancelled = false;
+
+    async function renderPayPalButton() {
+      const shouldShowPayPal =
+        storeSettings.paypal_enabled &&
+        storeSettings.paypal_client_id &&
+        storeSettings.paypal_hosted_button_id &&
+        lines.length > 0;
+
+      if (!shouldShowPayPal) {
+        setPaypalReady(false);
+        setPaypalError("");
+        return;
+      }
+
+      const renderKey = `${storeSettings.paypal_client_id}:${storeSettings.paypal_hosted_button_id}:cart`;
+      if (paypalRenderedFor === renderKey) return;
+
+      setPaypalError("");
+      setPaypalReady(false);
+
+      try {
+        const paypal = await loadPayPalSdk(storeSettings.paypal_client_id);
+        if (cancelled) return;
+
+        const container = document.getElementById("paypal-cart-button-container");
+        if (!container) return;
+
+        container.innerHTML = "";
+
+        if (!paypal?.HostedButtons) {
+          throw new Error("PayPal Hosted Buttons is not available");
+        }
+
+        await paypal
+          .HostedButtons({
+            hostedButtonId: storeSettings.paypal_hosted_button_id,
+          })
+          .render("#paypal-cart-button-container");
+
+        if (cancelled) return;
+        setPaypalReady(true);
+        setPaypalRenderedFor(renderKey);
+      } catch (error) {
+        console.error("PayPal render error:", error);
+        if (!cancelled) {
+          setPaypalError("PayPal could not be loaded right now.");
+          setPaypalReady(false);
+        }
+      }
+    }
+
+    renderPayPalButton();
+
+    return () => {
+      cancelled = true;
+    };
+  }, [storeSettings, lines.length, paypalRenderedFor]);
+
+  async function loadStoreSettings() {
+    const { data, error } = await supabase
+      .from("store_settings")
+      .select("*")
+      .limit(1)
+      .single();
+
+    if (error) {
+      console.error("loadStoreSettings error:", error);
+      return;
+    }
+
+    if (data) {
+      setStoreSettings({
+        paypal_enabled: Boolean(data.paypal_enabled),
+        paypal_client_id: data.paypal_client_id || "",
+        paypal_hosted_button_id: data.paypal_hosted_button_id || "",
+        paypal_pay_later_enabled: Boolean(data.paypal_pay_later_enabled),
+      });
+    }
+  }
 
   async function checkoutStripe() {
     setErr("");
@@ -91,6 +228,13 @@ export default function Cart() {
       setBusy(false);
     }
   }
+
+  const showPayPalBlock = Boolean(
+    lines.length &&
+      storeSettings.paypal_enabled &&
+      storeSettings.paypal_client_id &&
+      storeSettings.paypal_hosted_button_id
+  );
 
   return (
     <div className="container" style={{ paddingTop: 18, paddingBottom: 18 }}>
@@ -223,6 +367,41 @@ export default function Cart() {
                 </div>
               )}
 
+              {showPayPalBlock ? (
+                <div
+                  className="card"
+                  style={{
+                    marginTop: 14,
+                    padding: 14,
+                    background: "rgba(255,255,255,.04)",
+                  }}
+                >
+                  <div style={{ fontWeight: 800 }}>PayPal</div>
+                  <div className="small" style={{ marginTop: 6 }}>
+                    {storeSettings.paypal_pay_later_enabled
+                      ? "Pay with PayPal or use Pay Later."
+                      : "Pay securely with PayPal."}
+                  </div>
+
+                  <div
+                    id="paypal-cart-button-container"
+                    style={{ marginTop: 12, minHeight: 44 }}
+                  />
+
+                  {!paypalReady && !paypalError ? (
+                    <div className="small" style={{ marginTop: 8, opacity: 0.75 }}>
+                      Loading PayPal...
+                    </div>
+                  ) : null}
+
+                  {paypalError ? (
+                    <div className="small" style={{ marginTop: 8, opacity: 0.85 }}>
+                      {paypalError}
+                    </div>
+                  ) : null}
+                </div>
+              ) : null}
+
               <div style={{ display: "grid", gap: 10, marginTop: 14 }}>
                 <button
                   className="btn btn-primary"
@@ -230,7 +409,7 @@ export default function Cart() {
                   disabled={busy}
                   type="button"
                 >
-                  {busy ? "Starting..." : "Checkout with Card"}
+                  {busy ? "Starting..." : "Checkout with Card / Klarna"}
                 </button>
 
                 <button
