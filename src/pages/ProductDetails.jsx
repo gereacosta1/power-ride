@@ -1,3 +1,4 @@
+// src/pages/ProductDetails.jsx
 import React, { useEffect, useMemo, useState } from "react";
 import { useParams, Link } from "react-router-dom";
 import { supabase } from "../lib/supabase.js";
@@ -9,6 +10,7 @@ import { getProductBySlug } from "../data/products.js";
 function parseList(str) {
   if (!str) return [];
   if (Array.isArray(str)) return str.filter(Boolean);
+
   return String(str)
     .split(",")
     .map((s) => s.trim())
@@ -81,8 +83,11 @@ function loadPayPalSdk(clientId) {
     script.dataset.paypalClientId = clientId;
 
     script.onload = () => {
-      if (window.paypal) resolve(window.paypal);
-      else reject(new Error("PayPal SDK loaded but window.paypal is missing"));
+      if (window.paypal) {
+        resolve(window.paypal);
+      } else {
+        reject(new Error("PayPal SDK loaded but window.paypal is missing"));
+      }
     };
 
     script.onerror = () => reject(new Error("Failed to load PayPal SDK"));
@@ -130,6 +135,7 @@ export default function ProductDetails() {
       if (!shouldShowPayPal) {
         setPaypalReady(false);
         setPaypalError("");
+        setPaypalRenderedFor("");
         return;
       }
 
@@ -143,7 +149,9 @@ export default function ProductDetails() {
         const paypal = await loadPayPalSdk(storeSettings.paypal_client_id);
         if (cancelled) return;
 
-        const container = document.getElementById("paypal-hosted-button-container");
+        const container = document.getElementById(
+          "paypal-hosted-button-container"
+        );
         if (!container) return;
 
         container.innerHTML = "";
@@ -166,6 +174,7 @@ export default function ProductDetails() {
         if (!cancelled) {
           setPaypalError("PayPal could not be loaded right now.");
           setPaypalReady(false);
+          setPaypalRenderedFor("");
         }
       }
     }
@@ -205,6 +214,8 @@ export default function ProductDetails() {
     setErr("");
     setImgOk(true);
     setPaypalRenderedFor("");
+    setPaypalReady(false);
+    setPaypalError("");
 
     const { data, error } = await supabase
       .from("products")
@@ -227,7 +238,7 @@ export default function ProductDetails() {
     }
 
     if (error) {
-      console.error(error);
+      console.error("loadProduct error:", error);
       setErr(error.message || "Failed to load product");
     }
 
@@ -263,6 +274,7 @@ export default function ProductDetails() {
 
   function addToCart() {
     if (!product) return;
+
     cart.addItem(product, 1);
     setAdded(true);
     setTimeout(() => setAdded(false), 900);
@@ -362,7 +374,9 @@ export default function ProductDetails() {
             </div>
 
             <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
-              {product.badge ? <span className="badge">{product.badge}</span> : null}
+              {product.badge ? (
+                <span className="badge">{product.badge}</span>
+              ) : null}
               {isKit ? <span className="badge">KIT</span> : null}
               {product.inStock ? (
                 <span className="badge">In stock</span>
@@ -472,7 +486,9 @@ export default function ProductDetails() {
             </div>
           ) : null}
 
-          {isKit && Array.isArray(product.includes) && product.includes.length > 0 ? (
+          {isKit &&
+          Array.isArray(product.includes) &&
+          product.includes.length > 0 ? (
             <div style={{ marginTop: 18 }}>
               <div style={{ fontWeight: 800, marginBottom: 8 }}>
                 What’s included
@@ -511,7 +527,11 @@ export default function ProductDetails() {
               marginTop: 20,
             }}
           >
-            <button className="btn btn-primary" onClick={addToCart} type="button">
+            <button
+              className="btn btn-primary"
+              onClick={addToCart}
+              type="button"
+            >
               {added ? "Added" : "Add to cart"}
             </button>
 

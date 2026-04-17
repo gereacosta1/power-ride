@@ -1,3 +1,4 @@
+// netlify/functions/create-stripe-checkout.mjs
 import Stripe from "stripe";
 
 function json(statusCode, body) {
@@ -8,9 +9,9 @@ function json(statusCode, body) {
       "Cache-Control": "no-store",
       "Access-Control-Allow-Origin": "*",
       "Access-Control-Allow-Methods": "POST, OPTIONS",
-      "Access-Control-Allow-Headers": "Content-Type",
+      "Access-Control-Allow-Headers": "Content-Type"
     },
-    body: JSON.stringify(body),
+    body: JSON.stringify(body)
   };
 }
 
@@ -21,20 +22,34 @@ function getSiteBaseUrl(event) {
     process.env.DEPLOY_PRIME_URL ||
     "";
 
-  if (envUrl) return String(envUrl).replace(/\/+$/, "");
+  if (envUrl) {
+    return String(envUrl).replace(/\/+$/, "");
+  }
 
   const proto = event.headers?.["x-forwarded-proto"] || "https";
   const host = event.headers?.host;
-  if (!host) return "https://powerridellc.com";
+
+  if (!host) {
+    return "https://powerridellc.com";
+  }
+
   return `${proto}://${host}`;
 }
 
 function toAbsoluteImageUrl(image, siteBase) {
   const raw = String(image || "").trim();
-  if (!raw) return "";
 
-  if (raw.startsWith("http://") || raw.startsWith("https://")) return raw;
-  if (raw.startsWith("/")) return `${siteBase}${raw}`;
+  if (!raw) {
+    return "";
+  }
+
+  if (raw.startsWith("http://") || raw.startsWith("https://")) {
+    return raw;
+  }
+
+  if (raw.startsWith("/")) {
+    return `${siteBase}${raw}`;
+  }
 
   return `${siteBase}/${raw}`;
 }
@@ -46,9 +61,9 @@ export async function handler(event) {
       headers: {
         "Access-Control-Allow-Origin": "*",
         "Access-Control-Allow-Methods": "POST, OPTIONS",
-        "Access-Control-Allow-Headers": "Content-Type",
+        "Access-Control-Allow-Headers": "Content-Type"
       },
-      body: "",
+      body: ""
     };
   }
 
@@ -83,9 +98,7 @@ export async function handler(event) {
       const imageUrl = toAbsoluteImageUrl(it.image, siteBase);
 
       if (!unitAmount || unitAmount < 1) {
-        throw new Error(
-          `Invalid unit_price for item: ${it.display_name || "Product"}`
-        );
+        throw new Error(`Invalid unit_price for item: ${it.display_name || "Product"}`);
       }
 
       return {
@@ -96,12 +109,12 @@ export async function handler(event) {
             name: it.display_name || "Product",
             ...(imageUrl ? { images: [imageUrl] } : {}),
             metadata: {
-              sku: it.sku || "",
-              slug: it.slug || "",
-            },
+              sku: String(it.sku || ""),
+              slug: String(it.slug || "")
+            }
           },
-          unit_amount: unitAmount,
-        },
+          unit_amount: unitAmount
+        }
       };
     });
 
@@ -113,7 +126,7 @@ export async function handler(event) {
       billing_address_collection: "auto",
       phone_number_collection: { enabled: true },
       allow_promotion_codes: true,
-      metadata: payload.metadata || {},
+      metadata: payload.metadata || {}
 
       // IMPORTANT:
       // Do not force payment_method_types here.
@@ -125,11 +138,11 @@ export async function handler(event) {
     return json(200, {
       url: session.url,
       id: session.id,
-      payment_method_types: session.payment_method_types || [],
+      payment_method_types: session.payment_method_types || []
     });
   } catch (e) {
     return json(500, {
-      error: e?.message || "Stripe checkout failed",
+      error: e?.message || "Stripe checkout failed"
     });
   }
 }

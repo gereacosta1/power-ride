@@ -3,17 +3,13 @@
   publish = "dist"
   functions = "netlify/functions"
 
-# API helpers
+# API routes
 [[redirects]]
-  from = "/api/affirm-authorize"
-  to = "/.netlify/functions/affirm-authorize"
+  from = "/api/*"
+  to = "/.netlify/functions/:splat"
   status = 200
 
-[[redirects]]
-  from = "/api/create-stripe-checkout"
-  to = "/.netlify/functions/create-stripe-checkout"
-  status = 200
-
+# SPA fallback
 [[redirects]]
   from = "/*"
   to = "/index.html"

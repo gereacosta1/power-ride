@@ -1,3 +1,4 @@
+// src/pages/Cart.jsx
 import React, { useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import { useCart } from "../context/CartContext.jsx";
@@ -80,6 +81,7 @@ export default function Cart() {
       if (!shouldShowPayPal) {
         setPaypalReady(false);
         setPaypalError("");
+        setPaypalRenderedFor("");
         return;
       }
 
@@ -116,6 +118,7 @@ export default function Cart() {
         if (!cancelled) {
           setPaypalError("PayPal could not be loaded right now.");
           setPaypalReady(false);
+          setPaypalRenderedFor("");
         }
       }
     }
@@ -173,8 +176,11 @@ export default function Cart() {
         }),
       });
 
-      const data = await res.json();
-      if (!res.ok) throw new Error(data?.error || "Stripe checkout failed");
+      const data = await res.json().catch(() => ({}));
+
+      if (!res.ok) {
+        throw new Error(data?.error || "Stripe checkout failed");
+      }
 
       if (data?.url) {
         window.location.href = data.url;
@@ -213,8 +219,12 @@ export default function Cart() {
         }),
       });
 
-      const data = await res.json();
-      if (!res.ok) throw new Error(data?.error || "Affirm authorize failed");
+      const data = await res.json().catch(() => ({}));
+
+      if (!res.ok) {
+        console.error("Affirm error response:", data);
+        throw new Error(data?.error || "Affirm authorize failed");
+      }
 
       if (data?.checkout_url) {
         window.location.href = data.checkout_url;
@@ -306,7 +316,9 @@ export default function Cart() {
                       <div className="cart-qty" aria-label="Quantity controls">
                         <button
                           className="btn"
-                          onClick={() => cart.setQty(it.slug, Number(it.qty || 1) - 1)}
+                          onClick={() =>
+                            cart.setQty(it.slug, Number(it.qty || 1) - 1)
+                          }
                           type="button"
                         >
                           −
@@ -324,7 +336,9 @@ export default function Cart() {
 
                         <button
                           className="btn"
-                          onClick={() => cart.setQty(it.slug, Number(it.qty || 1) + 1)}
+                          onClick={() =>
+                            cart.setQty(it.slug, Number(it.qty || 1) + 1)
+                          }
                           type="button"
                         >
                           +
