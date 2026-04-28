@@ -13,6 +13,7 @@ function formatCategory(cat) {
     scooter: "Electric scooters",
     bicycle: "E-bikes",
     motorcycle: "Motorcycles",
+    tech: "Tech products",
   };
 
   if (map[c]) return map[c];
@@ -26,6 +27,17 @@ function monthlyExample(price) {
   return (n / 12).toFixed(2);
 }
 
+function fallbackSlug(p) {
+  if (p?.slug) return p.slug;
+
+  return String(p?.name || p?.id || "")
+    .trim()
+    .toLowerCase()
+    .replace(/&/g, "and")
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/(^-|-$)/g, "");
+}
+
 export default function ProductCard({ p }) {
   const cart = useCart();
   const [added, setAdded] = useState(false);
@@ -35,6 +47,10 @@ export default function ProductCard({ p }) {
     paypal_pay_later_enabled: true,
     paypal_show_on_product_page: true,
   });
+
+  useEffect(() => {
+    setImgOk(true);
+  }, [p?.image]);
 
   useEffect(() => {
     let active = true;
@@ -67,11 +83,8 @@ export default function ProductCard({ p }) {
     };
   }, []);
 
-  const categoryLabel = useMemo(
-    () => formatCategory(p?.category),
-    [p?.category]
-  );
-
+  const productSlug = useMemo(() => fallbackSlug(p), [p]);
+  const categoryLabel = useMemo(() => formatCategory(p?.category), [p?.category]);
   const mo = useMemo(() => monthlyExample(p?.price), [p?.price]);
 
   const isKit = useMemo(
@@ -166,11 +179,7 @@ export default function ProductCard({ p }) {
           {p?.name}
         </div>
 
-        <div
-          style={{
-            marginTop: 8,
-          }}
-        >
+        <div style={{ marginTop: 8 }}>
           <div style={{ fontSize: 20, fontWeight: 900 }}>
             {usd(p?.price)}
           </div>
@@ -247,7 +256,7 @@ export default function ProductCard({ p }) {
         >
           <Link
             className="btn btn-primary"
-            to={`/product/${p.slug}`}
+            to={`/product/${productSlug}`}
             style={{ flex: 1 }}
           >
             View

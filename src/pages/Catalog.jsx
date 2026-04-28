@@ -35,11 +35,11 @@ function mergeProducts(dbProducts, localProductsList) {
   const map = new Map();
 
   localProductsList.forEach((p) => {
-    map.set(String(p.slug), p);
+    map.set(String(p.slug || p.id), p);
   });
 
   dbProducts.forEach((p) => {
-    map.set(String(p.slug), p);
+    map.set(String(p.slug || p.id), p);
   });
 
   return Array.from(map.values());
@@ -102,6 +102,11 @@ export default function Catalog() {
     [products]
   );
 
+  const tech = useMemo(
+    () => products.filter((p) => p.category === "tech"),
+    [products]
+  );
+
   return (
     <div className="container" style={{ paddingTop: 18, paddingBottom: 18 }}>
       <div>
@@ -118,6 +123,7 @@ export default function Catalog() {
           <Section title="Motorcycles" items={motorcycles} />
           <Section title="JBL speakers" items={audio} />
           <Section title="Solar products" items={solar} />
+          <Section title="Tech products" items={tech} />
         </>
       )}
 
@@ -129,19 +135,17 @@ export default function Catalog() {
 }
 
 function Section({ title, items }) {
+  if (!items.length) return null;
+
   return (
     <section style={{ marginTop: 18 }}>
       <h3>{title}</h3>
 
-      {!items.length ? (
-        <div style={{ marginTop: 12 }}>No products yet</div>
-      ) : (
-        <div className="grid" style={{ marginTop: 12 }}>
-          {items.map((p) => (
-            <ProductCard key={p.slug || p.id} p={p} />
-          ))}
-        </div>
-      )}
+      <div className="grid" style={{ marginTop: 12 }}>
+        {items.map((p) => (
+          <ProductCard key={p.slug || p.id} p={p} />
+        ))}
+      </div>
     </section>
   );
 }

@@ -348,8 +348,6 @@ const solarProducts = [
     type: "single",
     includes: [],
   },
-
-  // Nuevos productos cargados en /public/img
   {
     id: "s11",
     name: "Kit Solar Off Grid",
@@ -358,11 +356,7 @@ const solarProducts = [
     image: "/img/kit-solar-off-grid.jpeg",
     short:
       "Complete off-grid solar kit for backup and independent energy setups.",
-    specs: [
-      "Off-grid setup",
-      "Ready-to-install bundle",
-      "Ideal for backup power",
-    ],
+    specs: ["Off-grid setup", "Ready-to-install bundle", "Ideal for backup power"],
     badge: "KIT",
     inStock: true,
     type: "kit",
@@ -376,11 +370,7 @@ const solarProducts = [
     image: "/img/combo-energia-solar.jpeg",
     short:
       "Solar combo package for home, business or backup energy applications.",
-    specs: [
-      "Bundle package",
-      "Solar energy solution",
-      "Great value combination",
-    ],
+    specs: ["Bundle package", "Solar energy solution", "Great value combination"],
     badge: "Combo",
     inStock: true,
     type: "kit",
@@ -435,7 +425,208 @@ const solarProducts = [
   includes: Array.isArray(p.includes) ? p.includes : [],
 }));
 
-export const products = [...scooterProducts, ...jblProducts, ...solarProducts];
+const TECH_IMG = "/img/tech-products";
+
+const techProducts = [
+  {
+    id: "t1",
+    name: "Canon EOS R6 Mark II",
+    category: "tech",
+    price: 2499,
+    image: `${TECH_IMG}/canon-eos-r6-mark-ii.jpg`,
+    short:
+      "Professional mirrorless camera with high-speed performance, sharp image quality and advanced video features.",
+    specs: ["Mirrorless camera", "RF lens system", "Professional video"],
+    badge: "New Arrival",
+    inStock: true,
+    type: "single",
+    includes: [],
+  },
+  {
+    id: "t2",
+    name: "Canon Rebel T7 Kit",
+    category: "tech",
+    price: 549,
+    image: `${TECH_IMG}/canon-rebel-t7-kit.jpg`,
+    short:
+      "DSLR camera kit with two lenses, ideal for photography beginners and content creators.",
+    specs: ["DSLR camera", "Dual lens kit", "Beginner friendly"],
+    badge: "Camera Kit",
+    inStock: true,
+    type: "single",
+    includes: [],
+  },
+  {
+    id: "t3",
+    name: "Deco Gear 49 OLED Monitor",
+    category: "tech",
+    price: 1299,
+    image: `${TECH_IMG}/deco-gear-49-oled-monitor.jpg`,
+    short:
+      "49-inch ultra-wide OLED gaming monitor with high refresh rate and immersive 32:9 display.",
+    specs: ["49-inch OLED", "240Hz", "5120x1440"],
+    badge: "Gaming",
+    inStock: true,
+    type: "single",
+    includes: [],
+  },
+  {
+    id: "t4",
+    name: "DJI Osmo Action 6 Combo",
+    category: "tech",
+    price: 399,
+    image: `${TECH_IMG}/dji-osmo-action-6-combo.jpg`,
+    short:
+      "Action camera combo built for smooth video, outdoor recording and high-quality content creation.",
+    specs: ["Action camera", "Stabilized video", "Creator combo"],
+    badge: "Action Cam",
+    inStock: true,
+    type: "single",
+    includes: [],
+  },
+  {
+    id: "t5",
+    name: "EcoFlow Rapid Pro X Power Bank",
+    category: "tech",
+    price: 249,
+    image: `${TECH_IMG}/ecoflow-rapid-pro-x.jpg`,
+    short:
+      "High-capacity portable power bank with fast charging support for laptops, phones and daily devices.",
+    specs: ["27650mAh", "300W output", "Fast charging"],
+    badge: "Power",
+    inStock: true,
+    type: "single",
+    includes: [],
+  },
+  {
+    id: "t6",
+    name: "Eureka J15 Max Robot Vacuum",
+    category: "tech",
+    price: 799,
+    image: `${TECH_IMG}/eureka-j15-max-robot.jpg`,
+    short:
+      "Smart robot vacuum with powerful suction and automatic cleaning features for modern homes.",
+    specs: ["Robot vacuum", "Auto cleaning", "Strong suction"],
+    badge: "Smart Home",
+    inStock: true,
+    type: "single",
+    includes: [],
+  },
+  {
+    id: "t7",
+    name: "GoPro HERO13 Accessories Kit",
+    category: "tech",
+    price: 149,
+    image: `${TECH_IMG}/gopro-hero-13-accessories-kit.jpg`,
+    short:
+      "Accessory bundle for GoPro HERO13 with mounts, batteries and useful recording tools.",
+    specs: ["Accessory kit", "Extra batteries", "Mounts included"],
+    badge: "Bundle",
+    inStock: true,
+    type: "single",
+    includes: [],
+  },
+  {
+    id: "t8",
+    name: "GoPro HERO13 Black Bundle",
+    category: "tech",
+    price: 499,
+    image: `${TECH_IMG}/gopro-hero-13-black-bundle.jpg`,
+    short:
+      "GoPro HERO13 Black bundle with accessories for action recording, travel and content creation.",
+    specs: ["HERO13 Black", "Battery bundle", "Action recording"],
+    badge: "Featured",
+    inStock: true,
+    type: "single",
+    includes: [],
+  },
+  {
+    id: "t9",
+    name: "INNOCN 49 OLED Monitor",
+    category: "tech",
+    price: 1399,
+    image: `${TECH_IMG}/innocn-49-oled-monitor.jpg`,
+    short:
+      "Curved 49-inch OLED monitor designed for gaming, multitasking and premium productivity setups.",
+    specs: ["49-inch OLED", "240Hz", "Curved display"],
+    badge: "OLED",
+    inStock: true,
+    type: "single",
+    includes: [],
+  },
+  {
+    id: "t10",
+    name: "Mova Mobius 60 Robot Vacuum",
+    category: "tech",
+    price: 699,
+    image: `${TECH_IMG}/mova-mobius-60-robot.jpg`,
+    short:
+      "Robot vacuum and mop system with smart cleaning, strong suction and automated home maintenance.",
+    specs: ["Robot vacuum", "Mop function", "Smart cleaning"],
+    badge: "Smart Home",
+    inStock: true,
+    type: "single",
+    includes: [],
+  },
+  {
+    id: "t11",
+    name: "NearHub S Pro 4K Interactive Board",
+    category: "tech",
+    price: 1999,
+    image: `${TECH_IMG}/nearhub-s-pro-4k-board.jpg`,
+    short:
+      "55-inch 4K interactive board with touchscreen, camera and collaboration tools for offices and education.",
+    specs: ["55-inch 4K", "Touchscreen", "Collaboration board"],
+    badge: "Office",
+    inStock: true,
+    type: "single",
+    includes: [],
+  },
+  {
+    id: "t12",
+    name: "Nikon D7500 Bundle",
+    category: "tech",
+    price: 899,
+    image: `${TECH_IMG}/nikon-d7500-bundle.jpg`,
+    short:
+      "Nikon DSLR camera bundle with accessories, lenses and photography essentials.",
+    specs: ["DSLR camera", "Bundle kit", "Photography gear"],
+    badge: "Camera Kit",
+    inStock: true,
+    type: "single",
+    includes: [],
+  },
+  {
+    id: "t13",
+    name: "Smatree Predator Triton 17 Case",
+    category: "tech",
+    price: 34,
+    image: `${TECH_IMG}/smatree-predator-triton-case.jpg`,
+    short:
+      "Protective laptop case for Acer Predator Triton 17-inch laptops with durable hard-shell protection.",
+    specs: ["17-inch case", "Hard protection", "Laptop accessory"],
+    badge: "Accessory",
+    inStock: true,
+    type: "single",
+    includes: [],
+  },
+].map((p) => ({
+  ...p,
+  slug: slugify(p.name),
+  image: normalizeImage(p.image),
+  specs: Array.isArray(p.specs) ? p.specs : [],
+  includes: Array.isArray(p.includes) ? p.includes : [],
+}));
+
+export const products = [
+  ...scooterProducts,
+  ...jblProducts,
+  ...solarProducts,
+  ...techProducts,
+].map((p) => ({
+  ...p,
+  category: String(p.category || "").toLowerCase().trim(),
+}));
 
 export function getProductBySlug(slug) {
   return products.find((p) => p.slug === slug);
