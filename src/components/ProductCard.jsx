@@ -1,36 +1,40 @@
+// src/components/ProductCard.jsx
 import React, { useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import { usd } from "../utils/money.js";
 import { useCart } from "../context/CartContext.jsx";
 import { supabase } from "../lib/supabase.js";
 
-function formatCategory(cat) {
-  const c = String(cat || "").toLowerCase().trim();
+function formatCategory(category) {
+  const c = String(category || "").toLowerCase().trim();
 
   const map = {
-    solar: "Solar energy",
+    solar: "Solar Energy",
     audio: "Audio",
-    scooter: "Electric scooters",
-    bicycle: "E-bikes",
+    scooter: "Electric Scooters",
+    bicycle: "E-Bikes",
     motorcycle: "Motorcycles",
-    tech: "Tech products",
+    tech: "Tech Products",
   };
 
   if (map[c]) return map[c];
   if (!c) return "Item";
+
   return c.charAt(0).toUpperCase() + c.slice(1);
 }
 
 function monthlyExample(price) {
   const n = Number(price || 0);
+
   if (!Number.isFinite(n) || n <= 0) return "";
+
   return (n / 12).toFixed(2);
 }
 
-function fallbackSlug(p) {
-  if (p?.slug) return p.slug;
+function fallbackSlug(product) {
+  if (product?.slug) return product.slug;
 
-  return String(p?.name || p?.id || "")
+  return String(product?.name || product?.id || "")
     .trim()
     .toLowerCase()
     .replace(/&/g, "and")
@@ -38,8 +42,18 @@ function fallbackSlug(p) {
     .replace(/(^-|-$)/g, "");
 }
 
+function getImage(product) {
+  return product?.image || product?.image_url || "";
+}
+
+function hasValidPrice(price) {
+  const n = Number(price || 0);
+  return Number.isFinite(n) && n > 0;
+}
+
 export default function ProductCard({ p }) {
   const cart = useCart();
+
   const [added, setAdded] = useState(false);
   const [imgOk, setImgOk] = useState(true);
   const [storeSettings, setStoreSettings] = useState({
@@ -48,32 +62,73 @@ export default function ProductCard({ p }) {
     paypal_show_on_product_page: true,
   });
 
+  const productImage = useMemo(() => getImage(p), [p]);
+  const productSlug = useMemo(() => fallbackSlug(p), [p]);
+  const categoryLabel = useMemo(() => formatCategory(p?.category), [p?.category]);
+  const hasPrice = useMemo(() => hasValidPrice(p?.price), [p?.price]);
+  const mo = useMemo(() => monthlyExample(p?.price), [p?.price]);
+
+  const isKit = useMemo(() => {
+    return String(p?.type || "").toLowerCase().trim() === "kit";
+  }, [p?.type]);
+
+  const inStock = useMemo(() => {
+    if (typeof p?.inStock === "boolean") return p.inStock;
+    if (typeof p?.in_stock === "boolean") return p.in_stock;
+    return true;
+  }, [p]);
+
+  const includesPreview = useMemo(() => {
+    if (!Array.isArray(p?.includes)) return [];
+    return p.includes.filter(Boolean).slice(0, 3);
+  }, [p?.includes]);
+
+  const showPayPalNote = useMemo(() => {
+    return Boolean(
+      hasPrice &&
+        storeSettings.paypal_enabled &&
+        storeSettings.paypal_show_on_product_page
+    );
+  }, [hasPrice, storeSettings]);
+
   useEffect(() => {
     setImgOk(true);
-  }, [p?.image]);
+  }, [productImage]);
 
   useEffect(() => {
     let active = true;
 
     async function loadStoreSettings() {
-      const { data, error } = await supabase
-        .from("store_settings")
-        .select("*")
-        .limit(1)
-        .single();
+      try {
+        const { data, error } = await supabase
+          .from("store_settings")
+          .select("*")
+          .limit(1)
+          .maybeSingle();
 
-      if (error) {
-        console.error("loadStoreSettings error:", error);
-        return;
+        if (error) {
+          console.error("ProductCard loadStoreSettings error:", error);
+          return;
+        }
+
+        if (!active || !data) return;
+
+        setStoreSettings({
+          paypal_enabled: Boolean(data.paypal_enabled),
+          paypal_pay_later_enabled:
+            data.paypal_pay_later_enabled === null ||
+            data.paypal_pay_later_enabled === undefined
+              ? true
+              : Boolean(data.paypal_pay_later_enabled),
+          paypal_show_on_product_page:
+            data.paypal_show_on_product_page === null ||
+            data.paypal_show_on_product_page === undefined
+              ? true
+              : Boolean(data.paypal_show_on_product_page),
+        });
+      } catch (error) {
+        console.error("ProductCard loadStoreSettings unexpected error:", error);
       }
-
-      if (!active || !data) return;
-
-      setStoreSettings({
-        paypal_enabled: Boolean(data.paypal_enabled),
-        paypal_pay_later_enabled: Boolean(data.paypal_pay_later_enabled),
-        paypal_show_on_product_page: Boolean(data.paypal_show_on_product_page),
-      });
     }
 
     loadStoreSettings();
@@ -83,30 +138,15 @@ export default function ProductCard({ p }) {
     };
   }, []);
 
-  const productSlug = useMemo(() => fallbackSlug(p), [p]);
-  const categoryLabel = useMemo(() => formatCategory(p?.category), [p?.category]);
-  const mo = useMemo(() => monthlyExample(p?.price), [p?.price]);
-
-  const isKit = useMemo(
-    () => String(p?.type || "").toLowerCase() === "kit",
-    [p?.type]
-  );
-
-  const includesPreview = useMemo(() => {
-    if (!Array.isArray(p?.includes)) return [];
-    return p.includes.filter(Boolean).slice(0, 3);
-  }, [p?.includes]);
-
-  const showPayPalNote = useMemo(() => {
-    return Boolean(
-      storeSettings.paypal_enabled && storeSettings.paypal_show_on_product_page
-    );
-  }, [storeSettings]);
-
   function add() {
+    if (!p || !inStock) return;
+
     cart.addItem(p, 1);
     setAdded(true);
-    setTimeout(() => setAdded(false), 1200);
+
+    setTimeout(() => {
+      setAdded(false);
+    }, 1200);
   }
 
   return (
@@ -118,9 +158,9 @@ export default function ProductCard({ p }) {
       }}
     >
       <div style={{ position: "relative" }}>
-        {imgOk && p?.image ? (
+        {imgOk && productImage ? (
           <img
-            src={p.image}
+            src={productImage}
             alt={p?.name || "Product"}
             onError={() => setImgOk(false)}
             style={{
@@ -160,6 +200,7 @@ export default function ProductCard({ p }) {
         >
           {p?.badge ? <span className="badge">{p.badge}</span> : null}
           {isKit ? <span className="badge">Kit</span> : null}
+          {!inStock ? <span className="badge">Out of stock</span> : null}
         </div>
       </div>
 
@@ -176,12 +217,12 @@ export default function ProductCard({ p }) {
             fontSize: 18,
           }}
         >
-          {p?.name}
+          {p?.name || "Product"}
         </div>
 
         <div style={{ marginTop: 8 }}>
           <div style={{ fontSize: 20, fontWeight: 900 }}>
-            {usd(p?.price)}
+            {hasPrice ? usd(p?.price) : "Contact for price"}
           </div>
 
           {mo ? (
@@ -232,7 +273,7 @@ export default function ProductCard({ p }) {
 
             <ul style={{ margin: 0, paddingLeft: 18 }}>
               {includesPreview.map((item, index) => (
-                <li key={index} className="small">
+                <li key={`${productSlug}-include-${index}`} className="small">
                   {item}
                 </li>
               ))}
@@ -266,14 +307,17 @@ export default function ProductCard({ p }) {
             className="btn"
             onClick={add}
             type="button"
+            disabled={!inStock}
             style={{
               flex: 1,
               background: added ? "var(--neon)" : "",
               color: added ? "#000" : "",
               fontWeight: 700,
+              opacity: inStock ? 1 : 0.65,
+              cursor: inStock ? "pointer" : "not-allowed",
             }}
           >
-            {added ? "Added ✓" : "Add to cart"}
+            {added ? "Added ✓" : inStock ? "Add to cart" : "Out of stock"}
           </button>
         </div>
       </div>
